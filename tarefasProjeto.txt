@@ -1,0 +1,24 @@
+ver melhor makefile e gcov
+
+fazer a primeira tarefa : 
+        Motor básico que permite visualizar o jogo, selecionar uma casa e pintá-la de branco ou riscá-la;
+
+        funçao que da printf da matriz
+
+
+nao se pode ter 2 letras seguidas riscadas
+
+tamanho?? tem que ser sempre uma matriz quadrada ? sim mas confirmar
+
+funçao que verifica logo no inicio se o jogo nao e impossivel ?? sim mas ver mais tardde, focar primeiro nesta tarefa
+
+
+
+
+FAZER:
+-printf que imprime a matriz -fazer
+-uma funçao que receba as coordenadas em minusculas e torna em maiuscula -2
+-uma funçao que recebe as coordenadas de uma minuscula e torna num cardinal
+-implementar um ciclo que imprime uma matriz, recebe uma instruçao e devolve a matriz com essa instruçao
+-criar uma funçao que mete um espaço entre todas as letras para ser mais legivel-fazer 
+-FAZER OS TESTES
