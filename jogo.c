@@ -101,6 +101,7 @@ int main (){
     Matriz mapa = {0, 0, NULL};
 
     while (1) {   
+        int i = 0;
         if (scanf(" %c", &c) != 1) printf ("Erro1");
         if (c == 'l') {
             char nome_Ficheiro[100];
@@ -126,3 +127,6 @@ int main (){
     return 0;
 }
 #endif
+
+
+// teste
