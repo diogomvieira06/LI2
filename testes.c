@@ -54,14 +54,30 @@ void test_ler_ficheiro(void) {
     remove("tabuleiro_teste.txt");
 }
 
+void test_ler_ficheiro2(void) {
+
+    Matriz m = ler_ficheiro("j1.txt");
+    CU_ASSERT(m.linhas == 5);
+    CU_ASSERT(m.colunas == 5);
+    CU_ASSERT(m.matriz[0][0] == 'e');
+    CU_ASSERT(m.matriz[0][3] == 'd');
+    CU_ASSERT(m.matriz[2][0] == 'b');
+    CU_ASSERT(m.matriz[4][4] == 'b');
+
+    limpar_Matriz(&m);
+}
+
+
 int main() {
     CU_initialize_registry();
 
-    CU_pSuite suite = CU_add_suite("Testes do Projeto", 0, 0);
+    CU_pSuite suite = CU_add_suite("Testes da Tarefa1", 0, 0);
     CU_add_test(suite, "Testar criar e limpar matriz", test_criar_limpar_matriz);
     CU_add_test(suite, "Testar pintar maiúscula", test_maiuscula_Elem);
     CU_add_test(suite, "Testar riscar célula", test_riscar_Elem);
     CU_add_test(suite, "Testar ler ficheiro", test_ler_ficheiro);
+    CU_add_test(tarefa1, "Testar ler ficheiro2", test_ler_ficheiro2);
+
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
