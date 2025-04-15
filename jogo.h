@@ -18,4 +18,6 @@ void imprimir_Matriz(Matriz a);
 void maiuscula_Elem(Matriz a, char x, int y);
 void riscar_Elem(Matriz a, char x, int y);
 
+int ehMaiuscula (char a);
+
 #endif // JOGO_H

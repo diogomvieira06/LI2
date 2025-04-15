@@ -1,7 +1,9 @@
 1 - Testes:
 
     Funções a testar:
-        - ehMaiuscula
+
+        adicionei mais testes naquelas funçoes da tarefa 1 e assim ja ficamos com isso resolvido.
+        - ehMaiuscula -> feito
         - verificarLetrasRiscadas
         - verificarLetrasRiscadasComMaiusculas
         - verificarLetrasMaiusculasRepetidas

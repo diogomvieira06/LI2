@@ -21,6 +21,7 @@ void test_criar_limpar_matriz(void) {
     CU_ASSERT(m.colunas == 0);
 }
 
+//3 testes para a funçao que torna os elementos em maiusculo
 void test_maiuscula_Elem(void) {
     Matriz m = criar_Matriz(2, 2);
     m.matriz[0][0] = 'a';
@@ -29,11 +30,46 @@ void test_maiuscula_Elem(void) {
     limpar_Matriz(&m);
 }
 
+void test_maiuscula_Elem_ja_maiuscula(void) {
+    Matriz m = criar_Matriz(2, 2);
+    m.matriz[0][0] = 'B';  // já está em maiúscula
+    maiuscula_Elem(m, 'a', 1);  // coordenada (a,1) = [0][0]
+    CU_ASSERT(m.matriz[0][0] == 'B');  // Deve continuar 'B'
+    limpar_Matriz(&m);
+}
+
+void test_maiuscula_Elem_coordenada_invalida(void) {
+    Matriz m = criar_Matriz(2, 2);
+    m.matriz[0][0] = 'a';
+    maiuscula_Elem(m, 'd', 5);  // coordenada (d,5) está fora dos limites
+    CU_ASSERT(m.matriz[0][0] == 'a');  // Nada deve ter mudado
+    limpar_Matriz(&m);
+}
+
+
+
+//3 testes para a funçao que risca coordenadas
 void test_riscar_Elem(void) {
     Matriz m = criar_Matriz(2, 2);
     m.matriz[1][1] = 'b';
     riscar_Elem(m, 'b', 2);
     CU_ASSERT(m.matriz[1][1] == '#');
+    limpar_Matriz(&m);
+}
+
+void test_riscar_Elem_elemento_ja_riscado(void) {
+    Matriz m = criar_Matriz(2, 2);
+    m.matriz[0][0] = '#';  
+    riscar_Elem(m, 'a', 1);  
+    CU_ASSERT(m.matriz[0][0] == '#');  
+    limpar_Matriz(&m);
+}
+
+void test_riscar_Elem_coordenada_invalida(void) {
+    Matriz m = criar_Matriz(2, 2);
+    m.matriz[0][0] = 'a';
+    riscar_Elem(m, 'd', 5); 
+    CU_ASSERT(m.matriz[0][0] == 'a'); 
     limpar_Matriz(&m);
 }
 
@@ -67,6 +103,18 @@ void test_ler_ficheiro2(void) {
     limpar_Matriz(&m);
 }
 
+///////////////////////////////////////////
+//TESTES DA TAREFA 2
+///////////////////////////////////////////
+
+void test_ehMaiuscula(void) {
+    CU_ASSERT(ehMaiuscula('A') == 1);
+    CU_ASSERT(ehMaiuscula('a') == 0);
+    CU_ASSERT(ehMaiuscula(' ') == 0);
+    CU_ASSERT(ehMaiuscula('#') == 0);
+}
+
+
 
 int main() {
     CU_initialize_registry();
@@ -76,7 +124,17 @@ int main() {
     CU_add_test(suite, "Testar pintar maiúscula", test_maiuscula_Elem);
     CU_add_test(suite, "Testar riscar célula", test_riscar_Elem);
     CU_add_test(suite, "Testar ler ficheiro", test_ler_ficheiro);
-    CU_add_test(tarefa1, "Testar ler ficheiro2", test_ler_ficheiro2);
+    CU_add_test(suite, "Testar ler ficheiro2", test_ler_ficheiro2);
+    CU_add_test(suite, "Riscar elemento já riscado", test_riscar_Elem_elemento_ja_riscado);
+    CU_add_test(suite, "Riscar elemento fora da matriz", test_riscar_Elem_coordenada_invalida);
+    CU_add_test(suite, "Maiuscula de letra já maiuscula", test_maiuscula_Elem_ja_maiuscula);
+    CU_add_test(suite, "Testarr ehMaiuscula", test_ehMaiuscula);
+
+    //testes tarefa 2
+
+    CU_pSuite suite = CU_add_suite("Testes da Tarefa2", 0, 0);
+    CU_add_test(suite, "Maiuscula com coordenada inválida", test_maiuscula_Elem_coordenada_invalida);
+
 
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
