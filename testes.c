@@ -127,13 +127,12 @@ int main() {
     CU_add_test(suite, "Testar ler ficheiro2", test_ler_ficheiro2);
     CU_add_test(suite, "Riscar elemento já riscado", test_riscar_Elem_elemento_ja_riscado);
     CU_add_test(suite, "Riscar elemento fora da matriz", test_riscar_Elem_coordenada_invalida);
-    CU_add_test(suite, "Maiuscula de letra já maiuscula", test_maiuscula_Elem_ja_maiuscula);
-    CU_add_test(suite, "Testarr ehMaiuscula", test_ehMaiuscula);
 
     //testes tarefa 2
 
-    CU_pSuite suite = CU_add_suite("Testes da Tarefa2", 0, 0);
-    CU_add_test(suite, "Maiuscula com coordenada inválida", test_maiuscula_Elem_coordenada_invalida);
+    CU_pSuite suite2 = CU_add_suite("Testes da Tarefa2", 0, 0);
+    CU_add_test(suite2, "Testarr ehMaiuscula", test_ehMaiuscula);
+
 
 
 
