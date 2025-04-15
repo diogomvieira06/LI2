@@ -1,0 +1,21 @@
+1 - Testes:
+
+    Funções a testar:
+        - ehMaiuscula
+        - verificarLetrasRiscadas
+        - verificarLetrasRiscadasComMaiusculas
+        - verificarLetrasMaiusculasRepetidas
+        - iniciarPilha
+        - colocarMatrizNaPilha (fazer teste em que se insere várias matrizes)
+        - retirarMatrizDaPilha (fazer teste em que se retira várias matrizes)
+        - restoraMatrizParaAUltimaJogada
+        - limpar_Pilha
+    
+    Testes de input/output:
+        - retroceder quando a pilha só tem uma matriz e testar quando ela está nula.
+        - para os dois comandos "r(riscar) e b(maiuscula)" quando estão fora dos limites
+        - teste para comandos inválidos
+
+2 - Comando v.
+3 - GCov.
+4 - comando g de guardar.

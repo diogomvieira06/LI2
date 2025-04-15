@@ -115,22 +115,22 @@ int verificarLetrasRiscadas (Matriz *a) {
 int verificarLetrasRiscadasComMaiusculas (Matriz *a) {
     int i, j, r = 1;
 
-    for (i = 1; i < a->linhas-1; i++) {
-        for (j = 1; j < a->colunas-1; j++) {
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
             if (a->matriz[i][j] == '#') {
-                if (!ehMaiuscula (a->matriz[i-1][j])) {
+                if (i > 0 && !ehMaiuscula (a->matriz[i-1][j])) {
                     r = 0;
                     printf ("A letra acima da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
                 }
-                if (!ehMaiuscula (a->matriz[i+1][j])) {
+                if (i < a->linhas && !ehMaiuscula (a->matriz[i+1][j])) {
                     r = 0;
                     printf ("A letra abaixo da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
                 }
-                if (!ehMaiuscula (a->matriz[i][j-1])) {
+                if (j > 0 && !ehMaiuscula (a->matriz[i][j-1])) {
                     r = 0;
                     printf ("A letra à esquerda da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
                 }
-                if (!ehMaiuscula (a->matriz[i][j+1])) {
+                if (j < a->colunas && !ehMaiuscula (a->matriz[i][j+1])) {
                     r = 0;
                     printf ("A letra à direita da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
                 }
@@ -231,7 +231,7 @@ void restoraMatrizParaAUltimaJogada (Pilha *a, Matriz *atual) {
     }
 }
 
-void limpar_Pilha(Pilha *a) {
+void limpar_Pilha (Pilha *a) {
     while (a->topo != NULL) {
         // Obtém o nó do topo
         Node *c = a->topo;
@@ -248,33 +248,6 @@ void limpar_Pilha(Pilha *a) {
     }
 }
 
-void imprimir_Pilha(Pilha *a) {
-    Node *atual = a->topo;
-    int contador = 0;
-
-    // Percorre a pilha
-    while (atual != NULL) {
-        printf("Estado %d:\n", contador + 1);
-
-        // Imprime a matriz do estado atual
-        for (int i = 0; i < atual->estado.linhas; i++) {
-            for (int j = 0; j < atual->estado.colunas; j++) {
-                printf("%c ", atual->estado.matriz[i][j]);
-            }
-            printf("\n");
-        }
-        printf("\n");
-
-        // Avança para o próximo nó
-        atual = atual->proximo;
-        contador++;
-    }
-
-    if (contador == 0) {
-        printf("A pilha está vazia.\n");
-    }
-}
-
 
 #ifndef TESTING
 
@@ -285,9 +258,10 @@ int main (){
     Pilha jogadas;
     iniciarPilha (&jogadas);
 
-        // Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
+//  Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
 //    mapa = ler_ficheiro("Teste de Maiusculas.txt");
 //    imprimir_Matriz (mapa);
+//    colocarMatrizNaPilha (&jogadas, mapa);
 
     while (1) {   
         if (scanf(" %c", &c) != 1) printf ("Erro1");
@@ -312,8 +286,11 @@ int main (){
         break;
         }
         else if (c == 'd') {
-            retirarMatrizDaPilha (&jogadas);
-            restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
+            if (jogadas.topo->proximo == NULL) printf ("Não é possível recuar mais jogadas.\n");
+            else {
+                retirarMatrizDaPilha (&jogadas);
+                restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
+            }
         }
         imprimir_Matriz (mapa);
         verificarLetrasRiscadas (&mapa);
