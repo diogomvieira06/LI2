@@ -96,15 +96,19 @@ int ehMaiuscula (char a) {
     else return 0;
 }
 
-int verificarLetrasRiscadas (Matriz *a) {
+int verificarLetrasRiscadas(Matriz *a) {
     int i, j, r = 1;
 
-    for (i = 0; i < a->linhas-1; i++) {
-        for (j = 0; j < a->colunas-1; j++) {
+    for (i = 0; i < a->linhas; i++) {// Como o C é "lazy" podemos colocar o i>0 antes que assim ele já não faz a parte de acessar fora da memoria 
+        for (j = 0; j < a->colunas; j++) {
             if (a->matriz[i][j] == '#') {
-                if (a->matriz[i+1][j] == '#' || a->matriz[i][j+1] == '#') {
+                // Verifica as células adjacentes com verificações de limites
+                if ((i > 0 && a->matriz[i-1][j] == '#') ||       // Célula acima
+                    (i < a->linhas - 1 && a->matriz[i+1][j] == '#') || // Célula abaixo
+                    (j > 0 && a->matriz[i][j-1] == '#') ||       // Célula à esquerda
+                    (j < a->colunas - 1 && a->matriz[i][j+1] == '#')) { // Célula à direita
                     r = 0;
-                    printf ("Existem uma ou mais letras riscadas juntas da coordenada (%c, %d).\n",97+j, i+1);
+                    printf("A coordenada %c%d tem pelo menos uma letra riscada á sua beira e não pode.\n", j+97, i+1);
                 }
             }
         }
@@ -117,22 +121,14 @@ int verificarLetrasRiscadasComMaiusculas (Matriz *a) {
 
     for (i = 0; i < a->linhas; i++) {
         for (j = 0; j < a->colunas; j++) {
-            if (a->matriz[i][j] == '#') {
-                if (i > 0 && !ehMaiuscula (a->matriz[i-1][j])) {
+            if (a->matriz[i][j] == '#') {// Como o C é "lazy" podemos colocar o i>0 antes que assim ele já não faz a parte de acessar fora da memoria 
+                // Verifica as células adjacentes com verificações de limites
+                if ((i > 0 && !ehMaiuscula(a->matriz[i-1][j])) ||       // Célula acima
+                    (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i+1][j])) || // Célula abaixo
+                    (j > 0 && !ehMaiuscula(a->matriz[i][j-1])) ||       // Célula à esquerda
+                    (j < a->colunas - 1 && !ehMaiuscula (a->matriz[i][j+1]))) { // Célula à direita
                     r = 0;
-                    printf ("A letra acima da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
-                }
-                if (i < a->linhas && !ehMaiuscula (a->matriz[i+1][j])) {
-                    r = 0;
-                    printf ("A letra abaixo da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
-                }
-                if (j > 0 && !ehMaiuscula (a->matriz[i][j-1])) {
-                    r = 0;
-                    printf ("A letra à esquerda da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
-                }
-                if (j < a->colunas && !ehMaiuscula (a->matriz[i][j+1])) {
-                    r = 0;
-                    printf ("A letra à direita da coordenada (%c, %d) tem que ser Maiuscula.\n",97+j, i+1);
+                    printf("A coordenada %c%d tem pelo menos uma letra minúscula á sua beira e não pode.\n", j+97, i+1);
                 }
             }
         }
@@ -155,7 +151,7 @@ int verificarLetrasMaiusculasRepetidas (Matriz *a) {
                     if (a->matriz[i][j] == a->matriz[i][t]) {
                         contaMaiuscula++;
                         r = 0;
-                        printf ("Duas ou mais letras Maiusculas na linha %d.\n", i+1);
+                        printf ("A coordenada %c%d não cumpre a regra das Maiusculas.\n",t+97, i+1);
                     }
                 }
             }
@@ -292,9 +288,18 @@ int main (){
                 restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
             }
         }
+        else if (c == 'v') {
+            if (verificarLetrasRiscadas (&mapa) && verificarLetrasMaiusculasRepetidas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa)) 
+                printf ("Sem restrições violadas.\n");
+            else {
+                verificarLetrasRiscadas (&mapa);
+                verificarLetrasMaiusculasRepetidas (&mapa);
+                verificarLetrasRiscadasComMaiusculas (&mapa);
+                }
+            }
         imprimir_Matriz (mapa);
         verificarLetrasRiscadas (&mapa);
-        verificarLetrasMaiusculasRepetidas (&mapa);
+//        verificarLetrasMaiusculasRepetidas (&mapa);
         verificarLetrasRiscadasComMaiusculas (&mapa);
     }
     limpar_Pilha (&jogadas);
