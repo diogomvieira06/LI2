@@ -3,10 +3,10 @@
     Funções a testar:
         - Testes da primeira função -> Feito
         - ehMaiuscula -> Feito
-        - verificarLetrasRiscadas e imprimir
-        - verificarLetrasRiscadasComMaiusculas e imprimir
-        - verificarLetrasMaiusculasRepetidasLinha e imprimir
-        - verificarLetrasMaiusculasRepetidasColuna e imprimir
+        - verificarLetrasRiscadas e imprimir -> Feito
+        - verificarLetrasRiscadasComMaiusculas e imprimir -> Feito
+        - verificarLetrasMaiusculasRepetidasLinha e imprimir -> Feito
+        - verificarLetrasMaiusculasRepetidasColuna e imprimir -> Feito
         - iniciarPilha
         - colocarMatrizNaPilha (fazer teste em que se insere várias matrizes)
         - retirarMatrizDaPilha (fazer teste em que se retira várias matrizes)

@@ -95,6 +95,33 @@ int ehMaiuscula (char a) {
     }
     else return 0;
 }
+/*
+int verificarLetrasRiscadas(Matriz *a) {
+    int i, j, r = 1;
+
+    printf("Coordenadas que não cumprem a regra Riscadas: ");
+
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (a->matriz[i][j] == '#') {
+                int acima   = (i > 0               && a->matriz[i - 1][j] == '#');
+                int abaixo  = (i < a->linhas - 1   && a->matriz[i + 1][j] == '#');
+                int esquerda= (j > 0               && a->matriz[i][j - 1] == '#');
+                int direita = (j < a->colunas - 1  && a->matriz[i][j + 1] == '#');
+
+                if (acima || abaixo || esquerda || direita) {
+                    r = 0;
+                }
+            }
+        }
+    }
+
+    printf("\n");
+    return r;
+}
+*/
+
+
 
 int verificarLetrasRiscadas(Matriz *a) {
     int i, j, r = 1;
@@ -125,7 +152,7 @@ void imprimirLetrasRiscadas (Matriz *a) {
                     (i < a->linhas - 1 && a->matriz[i+1][j] == '#') || // Célula abaixo
                     (j > 0 && a->matriz[i][j-1] == '#') ||       // Célula à esquerda
                     (j < a->colunas - 1 && a->matriz[i][j+1] == '#')) { // Célula à direita
-                    printf("%c%d ", j+97, i+1);
+                    printf("%c %d, ", j+97, i+1);
                 }
             }
         }
@@ -134,16 +161,18 @@ void imprimirLetrasRiscadas (Matriz *a) {
 }
 
 
-int verificarLetrasRiscadasComMaiusculas (Matriz *a) {
+int verificarLetrasRiscadasComMaiusculas(Matriz *a) {
     int i, j, r = 1;
+
     for (i = 0; i < a->linhas; i++) {
         for (j = 0; j < a->colunas; j++) {
-            if (a->matriz[i][j] == '#') {// Como o C é "lazy" podemos colocar o i>0 antes que assim ele já não faz a parte de acessar fora da memoria 
-                // Verifica as células adjacentes com verificações de limites
-                if ((i > 0 && !ehMaiuscula(a->matriz[i-1][j])) ||       // Célula acima
-                    (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i+1][j])) || // Célula abaixo
-                    (j > 0 && !ehMaiuscula(a->matriz[i][j-1])) ||       // Célula à esquerda
-                    (j < a->colunas - 1 && !ehMaiuscula (a->matriz[i][j+1]))) { // Célula à direita
+            if (a->matriz[i][j] == '#') {
+                int cima = (i > 0 && !ehMaiuscula(a->matriz[i - 1][j]));
+                int baixo = (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i + 1][j]));
+                int esquerda = (j > 0 && !ehMaiuscula(a->matriz[i][j - 1]));
+                int direita= (j < a->colunas - 1 && !ehMaiuscula(a->matriz[i][j + 1]));
+                // pus assim para ser mais facil de perceber, mas a funçao funciona como estava antes
+                if (cima || baixo || esquerda || direita) {
                     r = 0;
                 }
             }
@@ -152,18 +181,22 @@ int verificarLetrasRiscadasComMaiusculas (Matriz *a) {
     return r;
 }
 
-void imprimirLetrasRiscadasComMaiusculas (Matriz *a) {
+//pus so as variaveis cima, baixo, direita e esquerda para perceber melhor
+//a funçao funciona como a anterior
+void imprimirLetrasRiscadasComMaiusculas(Matriz *a) {
     int i, j;
-    printf("Regra das Maiúsculas á beira das Riscadas: ");
+    printf("Regra das Maiúsculas à beira das Riscadas: ");
+
     for (i = 0; i < a->linhas; i++) {
         for (j = 0; j < a->colunas; j++) {
-            if (a->matriz[i][j] == '#') {// Como o C é "lazy" podemos colocar o i>0 antes que assim ele já não faz a parte de acessar fora da memoria 
-                // Verifica as células adjacentes com verificações de limites
-                if ((i > 0 && !ehMaiuscula(a->matriz[i-1][j])) ||       // Célula acima
-                    (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i+1][j])) || // Célula abaixo
-                    (j > 0 && !ehMaiuscula(a->matriz[i][j-1])) ||       // Célula à esquerda
-                    (j < a->colunas - 1 && !ehMaiuscula (a->matriz[i][j+1]))) { // Célula à direita
-                    printf("%c%d ", j+97, i+1);
+            if (a->matriz[i][j] == '#') {
+                int cima     = (i > 0 && !ehMaiuscula(a->matriz[i - 1][j]));
+                int baixo    = (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i + 1][j]));
+                int esquerda = (j > 0 && !ehMaiuscula(a->matriz[i][j - 1]));
+                int direita  = (j < a->colunas - 1 && !ehMaiuscula(a->matriz[i][j + 1]));
+
+                if (cima || baixo || esquerda || direita) {
+                    printf("%c %d, ", j + 97, i + 1); 
                 }
             }
         }
