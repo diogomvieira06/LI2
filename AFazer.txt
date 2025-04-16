@@ -1,6 +1,7 @@
 1 - Testes:
 
     Funções a testar:
+        -VER A CENA DE APAGAR LETRAS QND TIRAMOS DE RISCADAS 
         - Testes da primeira função -> Feito
         - ehMaiuscula -> Feito
         - verificarLetrasRiscadas e imprimir -> Feito
