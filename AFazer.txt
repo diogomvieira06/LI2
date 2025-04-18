@@ -8,20 +8,20 @@
         - verificarLetrasRiscadasComMaiusculas e imprimir -> Feito
         - verificarLetrasMaiusculasRepetidasLinha e imprimir -> Feito
         - verificarLetrasMaiusculasRepetidasColuna e imprimir -> Feito
-        - iniciarPilha
-        - colocarMatrizNaPilha (fazer teste em que se insere várias matrizes)
-        - retirarMatrizDaPilha (fazer teste em que se retira várias matrizes)
-        - restoraMatrizParaAUltimaJogada
-        - limpar_Pilha
+        - iniciarPilha -> Feito
+        - colocarMatrizNaPilha (fazer teste em que se insere várias matrizes) -> Feito MAS VER MELHOR(90%FEITO)
+        - retirarMatrizDaPilha (fazer teste em que se retira várias matrizes) -> Feito MAS VER MELHOR(90%FEITO)
+        - restoraMatrizParaAUltimaJogada -> Feito
+        - limpar_Pilha -> Feito
         -
     
     Testes de input/output:
         - retroceder quando a pilha só tem uma matriz e testar quando ela está nula.
-        - para os dois comandos "r(riscar) e b(maiuscula)" quando estão fora dos limites
+        - para os dois comandos "r(riscar) e b(maiuscula)" quando estão fora dos limites -> funciona perfeitamente
         - teste para comandos inválidos, (riscar uma Maiuscula, colocar em Maiuscula uma Maiuscula).
 
 2 - Comando v.
 3 - GCov.
 4 - comando g de guardar.
-5 - Criar restrição que não permite riscar uma letra Maiuscula e vice-versa.
-6 - Criar restrição que não permite colocar em Maiuscula uma maiuscula
+5 - Criar restrição que não permite riscar uma letra Maiuscula e vice-versa. ->FEITO(era mais facil do que parecia)
+6 - Criar restrição que não permite colocar em Maiuscula uma maiuscula -> ->FEITO(era mais facil do que parecia)

@@ -66,28 +66,37 @@ void maiuscula_Elem (Matriz a, char x, int y) {
     int linha = y - 1;
     int coluna = x - 'a';
 
-    if (linha >= 0 && linha< a.linhas && coluna >= 0 && coluna < a.colunas) {
-        a.matriz[linha][coluna] = a.matriz[linha][coluna] - 32; // mete em maiucula
+    if (linha >= 0 && linha < a.linhas && coluna >= 0 && coluna < a.colunas) {
+        char atual = a.matriz[linha][coluna];
+        if (atual >= 'a' && atual <= 'z') {
+            a.matriz[linha][coluna] = atual - 32; // Converte para maiúscula
+        } else {
+            printf("\n\nNão é possível colocar em maiúscula a célula (%c, %d): não é letra minúscula.\n\n", x, y);
+        }
+    } else {
+        printf("\n\nA coordenada (%c, %d) nao está dentro da matriz.\n\n", x, y);
     }
-    else {
-        printf("\n\nA coordenada (%c, %d) nao esta dentro da matriz\n\n", x, y);
-    }
-    //a.matriz[y-1][x-'a'] = a.matriz[y-1][x-'a'] - 32; // -32 serve para por em maiuscula pela tabela ASCII
 }
+
 
 
 
 void riscar_Elem (Matriz a, char x, int y) {
-    int linha = y-1;
-    int coluna = x-'a';
+    int linha = y - 1;
+    int coluna = x - 'a';
 
     if (linha >= 0 && linha < a.linhas && coluna >= 0 && coluna < a.colunas) {
-        a.matriz[linha][coluna] = '#';
+        if (!ehMaiuscula(a.matriz[linha][coluna])) {
+            a.matriz[linha][coluna] = '#';
+        } else {
+            printf("\n\nNão é possível riscar uma letra maiúscula na coordenada (%c, %d)\n\n", x, y);
+        }
     }
     else {
         printf("\n\nA coordenada (%c, %d) nao esta dentro da matriz\n\n", x, y);
     }
 }
+
 
 int ehMaiuscula (char a) {
     if (a >= 65 && a <= 90) {
@@ -352,6 +361,7 @@ void colocarMatrizNaPilha (Pilha *a, Matriz estadoDoJogo) {
 void retirarMatrizDaPilha (Pilha *a) {
     if (a->topo == NULL) {
         printf("A pilha está vazia. Não há nenhuma Matriz para retirar.\n");
+        return; // termina o que a funçao esta a fazer e para de executar o resto do codigo
     }
         // Obtém o nó do topo
     Node *c = a->topo;

@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<CUnit/Basic.h>
+#include<stdlib.h>
 #include"jogo.h"
 
 
@@ -329,6 +330,179 @@ void test_mesma_maiuscula_em_colunas_diferentes(void) {
     limpar_Matriz(&m);
 }
 
+//2 testes para a parte de iniciar pilha
+void test_iniciarPilha_deveInicializarComTopoNull() {
+    Pilha p;
+    iniciarPilha(&p);
+    CU_ASSERT_PTR_NULL(p.topo);
+}
+
+void test_iniciarPilha_2() { // neste teste a pilha ja tem valores na memoria mas qnd o jogo começa ele apaga esses valores e ent a pilha fica vazia
+    Pilha p;
+    Node nodoExemplo;
+    p.topo = &nodoExemplo;
+    iniciarPilha(&p);
+    CU_ASSERT_PTR_NULL(p.topo);
+}
+
+
+// para a funçao colocarMatrizNaPilha que coloca uma matriz na pilha
+void test_colocarMatrizNaPilha_umaMatriz() {
+    Pilha p;
+    iniciarPilha(&p);
+
+    Matriz m;
+    m.linhas = 2;
+    m.colunas = 2;
+    m.matriz = malloc(2 * sizeof(char*));
+    for (int i = 0; i < 2; i++) {
+        m.matriz[i] = malloc(2 * sizeof(char));
+        for (int j = 0; j < 2; j++) {
+            m.matriz[i][j] = 'A' + i + j;
+        }
+    }
+
+    colocarMatrizNaPilha(&p, m);
+
+    CU_ASSERT_PTR_NOT_NULL(p.topo);
+    CU_ASSERT_EQUAL(p.topo->estado.linhas, 2);
+    CU_ASSERT_EQUAL(p.topo->estado.colunas, 2);
+    CU_ASSERT_EQUAL(p.topo->estado.matriz[0][0], 'A');
+    CU_ASSERT_EQUAL(p.topo->estado.matriz[1][1], 'C');
+
+    // Libertar matriz original
+    for (int i = 0; i < m.linhas; i++) {
+        free(m.matriz[i]);
+    }
+    free(m.matriz);
+
+    // Libertar a matriz copiada dentro da pilha
+    for (int i = 0; i < p.topo->estado.linhas; i++) {
+        free(p.topo->estado.matriz[i]);
+    }
+    free(p.topo->estado.matriz);
+
+    free(p.topo);
+}
+
+//2 testes para a funçao retirarMatrizDaPilha que retira uma matriz do topo da pilha e apaga essa mesma memoria
+void test_retirarMatrizDaPilha_umElemento() {
+    Pilha p;
+    iniciarPilha(&p);
+
+    Matriz m;
+    m.linhas = 2;
+    m.colunas = 2;
+    m.matriz = malloc(2 * sizeof(char*));
+    for (int i = 0; i < 2; i++) {
+        m.matriz[i] = malloc(2 * sizeof(char));
+        for (int j = 0; j < 2; j++) {
+            m.matriz[i][j] = 'X';
+        }
+    }
+
+    colocarMatrizNaPilha(&p, m);
+
+    // Libertar a matriz original (a cópia foi feita dentro da pilha)
+    for (int i = 0; i < m.linhas; i++) free(m.matriz[i]);
+    free(m.matriz);
+
+    retirarMatrizDaPilha(&p);
+
+    CU_ASSERT_PTR_NULL(p.topo); 
+}
+
+void test_retirarMatrizDaPilha_pilhaVazia() {
+    Pilha p;
+    iniciarPilha(&p); // topo = NULL
+
+    retirarMatrizDaPilha(&p); // Deve apenas mostrar a mensagem, sem crash
+
+    CU_ASSERT_PTR_NULL(p.topo); // Continua NULL, sem alteração
+}
+
+void test_restoraMatrizParaAUltimaJogada_copiaCorreta() {
+    Pilha p;
+    iniciarPilha(&p);
+
+    // Criar matriz original (2x2)
+    Matriz m;
+    m.linhas = 2;
+    m.colunas = 2;
+    m.matriz = malloc(2 * sizeof(char*));
+    for (int i = 0; i < 2; i++) {
+        m.matriz[i] = malloc(2 * sizeof(char));
+        for (int j = 0; j < 2; j++) {
+            m.matriz[i][j] = 'A' + i * 2 + j;  // 'A', 'B', 'C', 'D'
+        }
+    }
+
+    // Inserir na pilha
+    colocarMatrizNaPilha(&p, m);
+
+    // Criar matriz "atual" (com espaço alocado)
+    Matriz atual;
+    atual.linhas = 2;
+    atual.colunas = 2;
+    atual.matriz = malloc(2 * sizeof(char*));
+    for (int i = 0; i < 2; i++) {
+        atual.matriz[i] = malloc(2 * sizeof(char));
+    }
+
+    // Chamar a função a testar
+    restoraMatrizParaAUltimaJogada(&p, &atual);
+
+    // Verificações
+    CU_ASSERT_EQUAL(atual.matriz[0][0], 'A');
+    CU_ASSERT_EQUAL(atual.matriz[0][1], 'B');
+    CU_ASSERT_EQUAL(atual.matriz[1][0], 'C');
+    CU_ASSERT_EQUAL(atual.matriz[1][1], 'D');
+
+    // Libertar matriz original
+    for (int i = 0; i < 2; i++) free(m.matriz[i]);
+    free(m.matriz);
+
+    // Libertar a matriz copiada na pilha
+    for (int i = 0; i < 2; i++) free(p.topo->estado.matriz[i]);
+    free(p.topo->estado.matriz);
+    free(p.topo);
+
+    // Libertar matriz atual
+    for (int i = 0; i < 2; i++) free(atual.matriz[i]);
+    free(atual.matriz);
+}
+
+void test_limparPilha_umNodo() {
+    Pilha p;
+    iniciarPilha(&p);
+
+    // Criar matriz 2x2 simples
+    Matriz m;
+    m.linhas = 2;
+    m.colunas = 2;
+    m.matriz = malloc(2 * sizeof(char*));
+    for (int i = 0; i < 2; i++) {
+        m.matriz[i] = malloc(2 * sizeof(char));
+        m.matriz[i][0] = 'A';
+        m.matriz[i][1] = 'B';
+    }
+
+    colocarMatrizNaPilha(&p, m);
+
+    // Libertar a matriz original (a cópia está na pilha)
+    for (int i = 0; i < 2; i++) free(m.matriz[i]);
+    free(m.matriz);
+
+    limpar_Pilha(&p);
+
+    CU_ASSERT_PTR_NULL(p.topo);  // Pilha deve estar vazia
+}
+
+
+
+
+
+
 
 
 
@@ -374,6 +548,17 @@ int main() {
     CU_add_test(Tarefa2, "Colunas com minúsculas repetidas", test_colunas_com_minusculas_repetidas);
     CU_add_test(Tarefa2, "Colunas com matriz vazia", test_colunas_matriz_vazia);
     CU_add_test(Tarefa2, "Mesma maiúscula em colunas diferentes", test_mesma_maiuscula_em_colunas_diferentes);
+    CU_add_test(Tarefa2, "iniciarPilha deve inicializar com topo NULL", test_iniciarPilha_deveInicializarComTopoNull);
+    CU_add_test(Tarefa2, "iniciarPilha deve limpar valores antigos", test_iniciarPilha_2);
+    CU_add_test(Tarefa2, "Inserir uma matriz simples na pilha", test_colocarMatrizNaPilha_umaMatriz);
+    CU_add_test(Tarefa2, "Retirar matriz de uma pilha com um elemento", test_retirarMatrizDaPilha_umElemento);
+    CU_add_test(Tarefa2, "Retirar matriz de uma pilha vazia", test_retirarMatrizDaPilha_pilhaVazia);
+    CU_add_test(Tarefa2, "Restaurar matriz a partir do topo da pilha", test_restoraMatrizParaAUltimaJogada_copiaCorreta);
+    CU_add_test(Tarefa2, "Limpar pilha com 1 nodo", test_limparPilha_umNodo);
+
+
+
+
 
 
 
