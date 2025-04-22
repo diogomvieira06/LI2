@@ -51,7 +51,6 @@ Matriz ler_ficheiro (const char *nome_Ficheiro) {
     return a;
 }
 
-
 void imprimir_Matriz (Matriz a) {
     int i, j;
     for (i=0 ; i < a.linhas; i++) {
@@ -104,32 +103,6 @@ int ehMaiuscula (char a) {
     }
     else return 0;
 }
-/*
-int verificarLetrasRiscadas(Matriz *a) {
-    int i, j, r = 1;
-
-    printf("Coordenadas que não cumprem a regra Riscadas: ");
-
-    for (i = 0; i < a->linhas; i++) {
-        for (j = 0; j < a->colunas; j++) {
-            if (a->matriz[i][j] == '#') {
-                int acima   = (i > 0               && a->matriz[i - 1][j] == '#');
-                int abaixo  = (i < a->linhas - 1   && a->matriz[i + 1][j] == '#');
-                int esquerda= (j > 0               && a->matriz[i][j - 1] == '#');
-                int direita = (j < a->colunas - 1  && a->matriz[i][j + 1] == '#');
-
-                if (acima || abaixo || esquerda || direita) {
-                    r = 0;
-                }
-            }
-        }
-    }
-
-    printf("\n");
-    return r;
-}
-*/
-
 
 
 int verificarLetrasRiscadas(Matriz *a) {
@@ -402,6 +375,25 @@ void limpar_Pilha (Pilha *a) {
     }
 }
 
+void gravar_ficheiro(Matriz a, const char *nome_Ficheiro) {
+    FILE *f = fopen(nome_Ficheiro, "w");
+    if (f == NULL) {
+        printf("Erro ao abrir o ficheiro '%s' para gravação.\n", nome_Ficheiro);
+        return;
+    }
+
+    fprintf(f, "%d %d\n", a.linhas, a.colunas);
+    for (int i = 0; i < a.linhas; i++) {
+        for (int j = 0; j < a.colunas; j++) {
+            fprintf(f, "%c", a.matriz[i][j]);
+        }
+        fprintf(f, "\n");
+    }
+
+    fclose(f);
+    printf("Jogo gravado no ficheiro '%s'.\n", nome_Ficheiro);
+}
+
 
 #ifndef TESTING
 
@@ -445,6 +437,11 @@ int main (){
                 retirarMatrizDaPilha (&jogadas);
                 restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
             }
+        }
+        else if (c == 'g') {
+            char nome_Ficheiro[100];
+            if (scanf ("%s", nome_Ficheiro) != 1) printf ("Erro2");
+            gravar_ficheiro (mapa, nome_Ficheiro);
         }
         else if (c == 'v') {
             if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa)) {
