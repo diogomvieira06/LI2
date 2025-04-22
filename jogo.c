@@ -51,7 +51,6 @@ Matriz ler_ficheiro (const char *nome_Ficheiro) {
     return a;
 }
 
-
 void imprimir_Matriz (Matriz a) {
     int i, j;
     for (i=0 ; i < a.linhas; i++) {
@@ -66,28 +65,37 @@ void maiuscula_Elem (Matriz a, char x, int y) {
     int linha = y - 1;
     int coluna = x - 'a';
 
-    if (linha >= 0 && linha< a.linhas && coluna >= 0 && coluna < a.colunas) {
-        a.matriz[linha][coluna] = a.matriz[linha][coluna] - 32; // mete em maiucula
+    if (linha >= 0 && linha < a.linhas && coluna >= 0 && coluna < a.colunas) {
+        char atual = a.matriz[linha][coluna];
+        if (atual >= 'a' && atual <= 'z') {
+            a.matriz[linha][coluna] = atual - 32; // Converte para maiúscula
+        } else {
+            printf("\n\nNão é possível colocar em maiúscula a célula (%c, %d): não é letra minúscula.\n\n", x, y);
+        }
+    } else {
+        printf("\n\nA coordenada (%c, %d) nao está dentro da matriz.\n\n", x, y);
     }
-    else {
-        printf("\n\nA coordenada (%c, %d) nao esta dentro da matriz\n\n", x, y);
-    }
-    //a.matriz[y-1][x-'a'] = a.matriz[y-1][x-'a'] - 32; // -32 serve para por em maiuscula pela tabela ASCII
 }
+
 
 
 
 void riscar_Elem (Matriz a, char x, int y) {
-    int linha = y-1;
-    int coluna = x-'a';
+    int linha = y - 1;
+    int coluna = x - 'a';
 
     if (linha >= 0 && linha < a.linhas && coluna >= 0 && coluna < a.colunas) {
-        a.matriz[linha][coluna] = '#';
+        if (!ehMaiuscula(a.matriz[linha][coluna])) {
+            a.matriz[linha][coluna] = '#';
+        } else {
+            printf("\n\nNão é possível riscar uma letra maiúscula na coordenada (%c, %d)\n\n", x, y);
+        }
     }
     else {
         printf("\n\nA coordenada (%c, %d) nao esta dentro da matriz\n\n", x, y);
     }
 }
+
 
 int ehMaiuscula (char a) {
     if (a >= 65 && a <= 90) {
@@ -95,6 +103,7 @@ int ehMaiuscula (char a) {
     }
     else return 0;
 }
+
 
 int verificarLetrasRiscadas(Matriz *a) {
     int i, j, r = 1;
@@ -125,7 +134,7 @@ void imprimirLetrasRiscadas (Matriz *a) {
                     (i < a->linhas - 1 && a->matriz[i+1][j] == '#') || // Célula abaixo
                     (j > 0 && a->matriz[i][j-1] == '#') ||       // Célula à esquerda
                     (j < a->colunas - 1 && a->matriz[i][j+1] == '#')) { // Célula à direita
-                    printf("%c%d ", j+97, i+1);
+                    printf("%c %d, ", j+97, i+1);
                 }
             }
         }
@@ -134,16 +143,18 @@ void imprimirLetrasRiscadas (Matriz *a) {
 }
 
 
-int verificarLetrasRiscadasComMaiusculas (Matriz *a) {
+int verificarLetrasRiscadasComMaiusculas(Matriz *a) {
     int i, j, r = 1;
+
     for (i = 0; i < a->linhas; i++) {
         for (j = 0; j < a->colunas; j++) {
-            if (a->matriz[i][j] == '#') {// Como o C é "lazy" podemos colocar o i>0 antes que assim ele já não faz a parte de acessar fora da memoria 
-                // Verifica as células adjacentes com verificações de limites
-                if ((i > 0 && !ehMaiuscula(a->matriz[i-1][j])) ||       // Célula acima
-                    (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i+1][j])) || // Célula abaixo
-                    (j > 0 && !ehMaiuscula(a->matriz[i][j-1])) ||       // Célula à esquerda
-                    (j < a->colunas - 1 && !ehMaiuscula (a->matriz[i][j+1]))) { // Célula à direita
+            if (a->matriz[i][j] == '#') {
+                int cima = (i > 0 && !ehMaiuscula(a->matriz[i - 1][j]));
+                int baixo = (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i + 1][j]));
+                int esquerda = (j > 0 && !ehMaiuscula(a->matriz[i][j - 1]));
+                int direita= (j < a->colunas - 1 && !ehMaiuscula(a->matriz[i][j + 1]));
+                // pus assim para ser mais facil de perceber, mas a funçao funciona como estava antes
+                if (cima || baixo || esquerda || direita) {
                     r = 0;
                 }
             }
@@ -152,18 +163,22 @@ int verificarLetrasRiscadasComMaiusculas (Matriz *a) {
     return r;
 }
 
-void imprimirLetrasRiscadasComMaiusculas (Matriz *a) {
+//pus so as variaveis cima, baixo, direita e esquerda para perceber melhor
+//a funçao funciona como a anterior
+void imprimirLetrasRiscadasComMaiusculas(Matriz *a) {
     int i, j;
-    printf("Regra das Maiúsculas á beira das Riscadas: ");
+    printf("Regra das Maiúsculas à beira das Riscadas: ");
+
     for (i = 0; i < a->linhas; i++) {
         for (j = 0; j < a->colunas; j++) {
-            if (a->matriz[i][j] == '#') {// Como o C é "lazy" podemos colocar o i>0 antes que assim ele já não faz a parte de acessar fora da memoria 
-                // Verifica as células adjacentes com verificações de limites
-                if ((i > 0 && !ehMaiuscula(a->matriz[i-1][j])) ||       // Célula acima
-                    (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i+1][j])) || // Célula abaixo
-                    (j > 0 && !ehMaiuscula(a->matriz[i][j-1])) ||       // Célula à esquerda
-                    (j < a->colunas - 1 && !ehMaiuscula (a->matriz[i][j+1]))) { // Célula à direita
-                    printf("%c%d ", j+97, i+1);
+            if (a->matriz[i][j] == '#') {
+                int cima     = (i > 0 && !ehMaiuscula(a->matriz[i - 1][j]));
+                int baixo    = (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i + 1][j]));
+                int esquerda = (j > 0 && !ehMaiuscula(a->matriz[i][j - 1]));
+                int direita  = (j < a->colunas - 1 && !ehMaiuscula(a->matriz[i][j + 1]));
+
+                if (cima || baixo || esquerda || direita) {
+                    printf("%c %d, ", j + 97, i + 1); 
                 }
             }
         }
@@ -319,6 +334,7 @@ void colocarMatrizNaPilha (Pilha *a, Matriz estadoDoJogo) {
 void retirarMatrizDaPilha (Pilha *a) {
     if (a->topo == NULL) {
         printf("A pilha está vazia. Não há nenhuma Matriz para retirar.\n");
+        return; // termina o que a funçao esta a fazer e para de executar o resto do codigo
     }
         // Obtém o nó do topo
     Node *c = a->topo;
@@ -357,6 +373,25 @@ void limpar_Pilha (Pilha *a) {
         // Libera o nó
         free(c);
     }
+}
+
+void gravar_ficheiro(Matriz a, const char *nome_Ficheiro) {
+    FILE *f = fopen(nome_Ficheiro, "w");
+    if (f == NULL) {
+        printf("Erro ao abrir o ficheiro '%s' para gravação.\n", nome_Ficheiro);
+        return;
+    }
+
+    fprintf(f, "%d %d\n", a.linhas, a.colunas);
+    for (int i = 0; i < a.linhas; i++) {
+        for (int j = 0; j < a.colunas; j++) {
+            fprintf(f, "%c", a.matriz[i][j]);
+        }
+        fprintf(f, "\n");
+    }
+
+    fclose(f);
+    printf("Jogo gravado no ficheiro '%s'.\n", nome_Ficheiro);
 }
 
 
@@ -402,6 +437,11 @@ int main (){
                 retirarMatrizDaPilha (&jogadas);
                 restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
             }
+        }
+        else if (c == 'g') {
+            char nome_Ficheiro[100];
+            if (scanf ("%s", nome_Ficheiro) != 1) printf ("Erro2");
+            gravar_ficheiro (mapa, nome_Ficheiro);
         }
         else if (c == 'v') {
             if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa)) {
