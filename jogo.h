@@ -21,7 +21,6 @@ typedef struct {
 } Pilha;
 
 
-
 // Funções principais
 Matriz criar_Matriz(int linhas, int colunas);
 void limpar_Matriz(Matriz *a);
@@ -43,6 +42,8 @@ void colocarMatrizNaPilha (Pilha *a, Matriz estadoDoJogo);
 void retirarMatrizDaPilha (Pilha *a);
 void restoraMatrizParaAUltimaJogada (Pilha *a, Matriz *atual);
 void limpar_Pilha (Pilha *a);
+void gravar_ficheiro(Matriz a, const char *nome_Ficheiro);
+
 
 
 
