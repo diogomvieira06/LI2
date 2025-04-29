@@ -26,6 +26,7 @@ Matriz criar_Matriz(int linhas, int colunas);
 void limpar_Matriz(Matriz *a);
 Matriz ler_ficheiro(const char *nome_Ficheiro);
 void imprimir_Matriz(Matriz a);
+void imprimir_Matriz_Ponteiro(Matriz *a);
 void maiuscula_Elem(Matriz a, char x, int y);
 void riscar_Elem(Matriz a, char x, int y);
 int ehMaiuscula (char a);
@@ -43,7 +44,13 @@ void retirarMatrizDaPilha (Pilha *a);
 void restoraMatrizParaAUltimaJogada (Pilha *a, Matriz *atual);
 void limpar_Pilha (Pilha *a);
 void gravar_ficheiro(Matriz a, const char *nome_Ficheiro);
-
+int verificarCaminhoMaiusculas(Matriz *a);
+void imprimirCaminhoMaiusculas(Matriz *a);
+Matriz cria_Matriz_copia (Matriz *a);
+Matriz copiaMatrizPara1e0s (Matriz *origem, Matriz *destino);
+int verCaminho(Matriz *a, int linha1, int coluna1, int linha2, int coluna2);
+int verCaminhoMatriz (Matriz *a);
+int verCaminhoMaiusculas (Matriz *a);
 
 
 

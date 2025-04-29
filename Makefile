@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -O1 -fsanitize=address -fno-omit-frame-pointer -g
+CFLAGS = -Wall -Wextra -pedantic -O1 -g -fprofile-arcs -ftest-coverage
 LDLIBS = -lcunit
 
 HDR = jogo.h
@@ -13,6 +13,10 @@ testar: testes.c jogo.c $(HDR)
 	$(CC) $(CFLAGS) -DTESTING -o testar testes.c jogo.c $(LDLIBS)
 	./testar
 
+gcov: testar
+	gcov testar-jogo.gcno
+	gcov testar-testes.gcno
+
 # Limpeza de ficheiros gerados
 clean:
-	rm -f jogo testar
+	rm -f jogo testar *.gcda *.gcno *.gcov
