@@ -70,10 +70,17 @@ void maiuscula_Elem (Matriz a, char x, int y) {
         if (atual >= 'a' && atual <= 'z') {
             a.matriz[linha][coluna] = atual - 32; // Converte para maiúscula
         } else {
+<<<<<<< HEAD
             printf("\n\nNão é possível colocar em maiúscula a célula (%c, %d): não é letra minúscula.\n\n", x, y);
         }
     } else {
         printf("\n\nA coordenada (%c, %d) nao está dentro da matriz.\n\n", x, y);
+=======
+            printf("Não é possível colocar em maiúscula a célula (%c, %d): não é letra minúscula.\n", x, y);
+        }
+    } else {
+        printf("A coordenada (%c, %d) nao está dentro da matriz.\n", x, y);
+>>>>>>> b349cbc (jogo.c alterado)
     }
 }
 
@@ -188,22 +195,12 @@ void imprimirLetrasRiscadasComMaiusculas(Matriz *a) {
 
 int verificarLetrasMaiusculasRepetidasLinha(Matriz *a) {
     int i, j, t, r = 1;
-    int repetidasNaLinha[a->colunas]; // Array para marcar repetições numa linha;
-
     // Verifica linhas
     for (i = 0; i < a->linhas; i++) {
-        // Inicializa o array de repetidasNaLinha para a linha atual
         for (j = 0; j < a->colunas; j++) {
-            repetidasNaLinha[j] = 0;
-        }
-
-        for (j = 0; j < a->colunas; j++) {
-            if (ehMaiuscula(a->matriz[i][j]) && !repetidasNaLinha[j]) {
+            if (ehMaiuscula(a->matriz[i][j])) {
                 for (t = j + 1; t < a->colunas; t++) {
                     if (a->matriz[i][j] == a->matriz[i][t]) {
-                        // Marca as colunas como repetidas
-                        repetidasNaLinha[j] = 1;
-                        repetidasNaLinha[t] = 1;
                         r = 0;
                     }
                 }
@@ -251,21 +248,12 @@ void imprimirLetrasMaiusculasRepetidasLinha(Matriz *a) {
 
 int verificarLetrasMaiusculasRepetidasColuna(Matriz *a) {
     int i, j, t, r = 1;
-    int repetidasNaColuna[a->linhas]; // Array para marcar repetições numa coluna;
     // Verifica colunas
     for (j = 0; j < a->colunas; j++) {
-        // Inicializa o array de repetidasNaColuna para a Coluna atual
         for (i = 0; i < a->linhas; i++) {
-            repetidasNaColuna[i] = 0;
-        }
-
-        for (i = 0; i < a->linhas; i++) {
-            if (ehMaiuscula(a->matriz[i][j]) && !repetidasNaColuna[i]) {
+            if (ehMaiuscula(a->matriz[i][j])) {
                 for (t = i + 1; t < a->linhas; t++) {
                     if (a->matriz[i][j] == a->matriz[t][j]) {
-                        // Marca as linhas como repetidas
-                        repetidasNaColuna[i] = 1;
-                        repetidasNaColuna[t] = 1;
                         r = 0;
                     }
                 }
@@ -394,6 +382,55 @@ void gravar_ficheiro(Matriz a, const char *nome_Ficheiro) {
     printf("Jogo gravado no ficheiro '%s'.\n", nome_Ficheiro);
 }
 
+<<<<<<< HEAD
+=======
+
+
+int verificarCaminhoMaiusculas(Matriz *a) {
+    int i, j, r = 1;
+
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMaiuscula(a->matriz[i][j])) {
+                int cima = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
+                int baixo = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
+                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
+                int direita= (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
+                // pus assim para ser mais facil de perceber, mas a funçao funciona como estava antes
+                if (!cima && !baixo && !esquerda && !direita) {
+                    r = 0;
+                }
+            }
+        }
+    }
+    return r;
+}
+
+
+void imprimirCaminhoMaiusculas(Matriz *a) {
+    int i, j;
+    printf("Regra de caminho ortogonal para outra Maiúscula: ");
+
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMaiuscula(a->matriz[i][j])) {
+                int cima     = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
+                int baixo    = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
+                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
+                int direita  = (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
+
+                if (!cima && !baixo && !esquerda && !direita) {
+                    printf("%c %d, ", j + 97, i + 1); 
+                }
+            }
+        }
+    }
+    printf("\n");
+}
+
+
+
+>>>>>>> b349cbc (jogo.c alterado)
 
 #ifndef TESTING
 
@@ -403,6 +440,7 @@ int main (){
     Matriz mapa = {0, 0, NULL};
     Pilha jogadas;
     iniciarPilha (&jogadas);
+    printf ("Carregue em c e dê enter para ver os comandos.\n");
 
 //  Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
 //    mapa = ler_ficheiro("Teste de Maiusculas.txt");
@@ -420,13 +458,22 @@ int main (){
         }
         else if (c == 'b') {
             if (scanf (" %c %d", &x, &y) != 2) printf ("Erro3");
-            maiuscula_Elem (mapa, x, y);
-            colocarMatrizNaPilha (&jogadas, mapa);
+            else if (x > (mapa.colunas - 1) + 'a' || y > mapa.linhas) printf ("A coordenada (%c, %d) não está dentro da matriz.\n", x, y);
+            else if (!(mapa.matriz[y-1][x -'a'] >= 'a' && mapa.matriz[y-1][x -'a'] <= 'z')) printf ("A coordenada (%c, %d) não é uma letra minúscula\n", x, y);
+            else {
+                maiuscula_Elem (mapa, x, y);
+                colocarMatrizNaPilha (&jogadas, mapa);
+            }
         }
         else if (c == 'r') {
-            if (scanf (" %c %d", &x, &y) != 2) printf ("Erro4");
-            riscar_Elem (mapa, x, y);
-            colocarMatrizNaPilha (&jogadas, mapa);
+            if (scanf (" %c %d", &x, &y) != 2) printf ("Coordenadas inválidas\n");
+            else if (x > (mapa.colunas - 1) + 'a' || y > mapa.linhas) printf ("A coordenada (%c, %d) não está dentro da matriz.\n", x, y);
+            else if (mapa.matriz[y-1][x -'a'] == '#') printf ("A coordenada (%c, %d) já está riscada\n", x, y);
+            else if (ehMaiuscula(mapa.matriz[y-1][x -'a'])) printf ("Não é possível riscar a coordenada (%c, %d), pois é uma letra Maiúscula\n", x, y);
+            else {
+                riscar_Elem (mapa, x, y);
+                colocarMatrizNaPilha (&jogadas, mapa);
+            }
         }
         else if (c == 's') {
         break;
@@ -444,7 +491,7 @@ int main (){
             gravar_ficheiro (mapa, nome_Ficheiro);
         }
         else if (c == 'v') {
-            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa)) {
+            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verificarCaminhoMaiusculas (&mapa)) {
                 printf ("Nenhuma regra violada.\n");
             }
             else {
@@ -453,10 +500,14 @@ int main (){
                 if (!verificarLetrasRiscadasComMaiusculas (&mapa)) imprimirLetrasRiscadasComMaiusculas (&mapa);
                 if (!verificarLetrasMaiusculasRepetidasLinha (&mapa)) imprimirLetrasMaiusculasRepetidasLinha (&mapa);
                 if (!verificarLetrasMaiusculasRepetidasColuna (&mapa)) imprimirLetrasMaiusculasRepetidasColuna (&mapa);
+                if (!verificarCaminhoMaiusculas (&mapa)) imprimirCaminhoMaiusculas (&mapa);
             }
         }
+        else if (c == 'c') {
+            printf ("Coordenadas : Letra minuscula (coluna) e número (linha)\ng (nome do ficheiro) -> Gravar o jogo\nl (nome do ficheiro) -> Fazer load de um ficheiro\nb (coordenada) -> Colocar em Maiúscula\nr (coordenada) -> Riscar uma Letra\nv -> Verificar restrições violadas\na -> Atualizar o jogo de acordo com as regras\nA -> Invocar o comando 'a' enquanto o jogo sofre alterações\nR -> Resolver o jogo\nd -> Desfazer o último comando\ns -> Sair do programa\n");
+        }
         imprimir_Matriz (mapa);
-}
+    }
     limpar_Pilha (&jogadas);
     limpar_Matriz (&mapa);
 
