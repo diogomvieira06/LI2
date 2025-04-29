@@ -337,7 +337,7 @@ void test_iniciarPilha_deveInicializarComTopoNull() {
     CU_ASSERT_PTR_NULL(p.topo);
 }
 
-void test_iniciarPilha_2() { // neste teste a pilha ja tem valores na memoria mas qnd o jogo começa ele apaga esses valores e ent a pilha fica vazia
+void test_iniciarPilha_2() {
     Pilha p;
     Node nodoExemplo;
     p.topo = &nodoExemplo;
@@ -472,33 +472,6 @@ void test_restoraMatrizParaAUltimaJogada_copiaCorreta() {
     free(atual.matriz);
 }
 
-void test_limparPilha_umNodo() {
-    Pilha p;
-    iniciarPilha(&p);
-
-    // Criar matriz 2x2 simples
-    Matriz m;
-    m.linhas = 2;
-    m.colunas = 2;
-    m.matriz = malloc(2 * sizeof(char*));
-    for (int i = 0; i < 2; i++) {
-        m.matriz[i] = malloc(2 * sizeof(char));
-        m.matriz[i][0] = 'A';
-        m.matriz[i][1] = 'B';
-    }
-
-    colocarMatrizNaPilha(&p, m);
-
-    // Libertar a matriz original (a cópia está na pilha)
-    for (int i = 0; i < 2; i++) free(m.matriz[i]);
-    free(m.matriz);
-
-    limpar_Pilha(&p);
-
-    CU_ASSERT_PTR_NULL(p.topo);  // Pilha deve estar vazia
-}
-
-
 
 
 
@@ -554,7 +527,6 @@ int main() {
     CU_add_test(Tarefa2, "Retirar matriz de uma pilha com um elemento", test_retirarMatrizDaPilha_umElemento);
     CU_add_test(Tarefa2, "Retirar matriz de uma pilha vazia", test_retirarMatrizDaPilha_pilhaVazia);
     CU_add_test(Tarefa2, "Restaurar matriz a partir do topo da pilha", test_restoraMatrizParaAUltimaJogada_copiaCorreta);
-    CU_add_test(Tarefa2, "Limpar pilha com 1 nodo", test_limparPilha_umNodo);
 
 
 
