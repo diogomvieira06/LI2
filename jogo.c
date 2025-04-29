@@ -61,6 +61,17 @@ void imprimir_Matriz (Matriz a) {
     }
 }
 
+void imprimir_Matriz_Ponteiro (Matriz *a) {
+    int i, j;
+    for (i=0 ; i < a->linhas; i++) {
+        for (j=0; j < a->colunas; j++) {
+            printf("%c ", a->matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+
 void maiuscula_Elem (Matriz a, char x, int y) {
     int linha = y - 1;
     int coluna = x - 'a';
@@ -70,17 +81,10 @@ void maiuscula_Elem (Matriz a, char x, int y) {
         if (atual >= 'a' && atual <= 'z') {
             a.matriz[linha][coluna] = atual - 32; // Converte para maiúscula
         } else {
-<<<<<<< HEAD
-            printf("\n\nNão é possível colocar em maiúscula a célula (%c, %d): não é letra minúscula.\n\n", x, y);
-        }
-    } else {
-        printf("\n\nA coordenada (%c, %d) nao está dentro da matriz.\n\n", x, y);
-=======
             printf("Não é possível colocar em maiúscula a célula (%c, %d): não é letra minúscula.\n", x, y);
         }
     } else {
         printf("A coordenada (%c, %d) nao está dentro da matriz.\n", x, y);
->>>>>>> b349cbc (jogo.c alterado)
     }
 }
 
@@ -382,8 +386,6 @@ void gravar_ficheiro(Matriz a, const char *nome_Ficheiro) {
     printf("Jogo gravado no ficheiro '%s'.\n", nome_Ficheiro);
 }
 
-<<<<<<< HEAD
-=======
 
 
 int verificarCaminhoMaiusculas(Matriz *a) {
@@ -428,9 +430,100 @@ void imprimirCaminhoMaiusculas(Matriz *a) {
     printf("\n");
 }
 
+Matriz cria_Matriz_copia (Matriz *a) {
+    int i, j;
+    Matriz visitado = criar_Matriz(a->linhas, a->colunas);
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMaiuscula(a->matriz[i][j])) visitado.matriz[i][j] = '1';
+            else visitado.matriz[i][j] = '0';
+        }
+    }
+    return visitado;
+}
 
 
->>>>>>> b349cbc (jogo.c alterado)
+Matriz copiaMatrizPara1e0s (Matriz *origem, Matriz *destino) {
+    int i, j;
+    for (i = 0; i < origem->linhas; i++) {
+        for (j = 0; j < origem->colunas; j++) {
+            if (ehMaiuscula (origem->matriz[i][j])) destino->matriz[i][j] = '1';
+            else destino->matriz[i][j] = '0';
+        }
+    }
+    return *destino;    
+}
+
+int verCaminho(Matriz *a, int linha1, int coluna1, int linha2, int coluna2) {
+    // Condição base: se chegamos ao destino
+    if (linha1 == linha2 && coluna1 == coluna2) return 1;
+
+    // Marca a célula atual como visitada temporariamente
+    char original = a->matriz[linha1][coluna1];
+    a->matriz[linha1][coluna1] = '0';
+
+    // Verifica as direções (cima, baixo, esquerda, direita)
+    if (linha1 > 0 && a->matriz[linha1 - 1][coluna1] == '1' &&
+        verCaminho(a, linha1 - 1, coluna1, linha2, coluna2)) {
+        a->matriz[linha1][coluna1] = original; // Restaura o estado original
+        return 1;
+    }
+
+    if (linha1 < a->linhas - 1 && a->matriz[linha1 + 1][coluna1] == '1' &&
+        verCaminho(a, linha1 + 1, coluna1, linha2, coluna2)) {
+        a->matriz[linha1][coluna1] = original; // Restaura o estado original
+        return 1;
+    }
+
+    if (coluna1 > 0 && a->matriz[linha1][coluna1 - 1] == '1' &&
+        verCaminho(a, linha1, coluna1 - 1, linha2, coluna2)) {
+        a->matriz[linha1][coluna1] = original; // Restaura o estado original
+        return 1;
+    }
+
+    if (coluna1 < a->colunas - 1 && a->matriz[linha1][coluna1 + 1] == '1' &&
+        verCaminho(a, linha1, coluna1 + 1, linha2, coluna2)) {
+        a->matriz[linha1][coluna1] = original; // Restaura o estado original
+        return 1;
+    }
+
+    // Restaura o estado original antes de retornar
+    a->matriz[linha1][coluna1] = original;
+    return 0;
+}
+
+int verCaminhoMatriz (Matriz *a) {
+    int i, j;
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (a->matriz[i][j] == '1') {
+                int i2, j2;
+                for (i2 = i; i2 < a->linhas; i2++) {
+                    if (i == i2) j2 = j + 1;
+                    else j2 = 0;
+                    for (; j2 < a->colunas; j2++) {
+                        if (a->matriz[i2][j2] == '1' && !verCaminho (a, i, j, i2, j2)) {
+                            return 0;
+                        }
+                    }
+                }        
+            }
+        }
+    }
+    return 1;
+}
+
+int verCaminhoMaiusculas (Matriz *a) {
+    int r;
+    Matriz copiaPara_1e0s = cria_Matriz_copia (a);
+    imprimir_Matriz_Ponteiro (&copiaPara_1e0s);
+    r = verCaminhoMatriz (&copiaPara_1e0s);
+    limpar_Matriz (&copiaPara_1e0s);
+    return r;
+}
+
+void imprimirVerCaminhoMaiusculas (Matriz *a) {
+}
 
 #ifndef TESTING
 
@@ -491,7 +584,7 @@ int main (){
             gravar_ficheiro (mapa, nome_Ficheiro);
         }
         else if (c == 'v') {
-            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verificarCaminhoMaiusculas (&mapa)) {
+            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verificarCaminhoMaiusculas (&mapa) && verCaminhoMaiusculas (&mapa)) {
                 printf ("Nenhuma regra violada.\n");
             }
             else {
@@ -501,16 +594,17 @@ int main (){
                 if (!verificarLetrasMaiusculasRepetidasLinha (&mapa)) imprimirLetrasMaiusculasRepetidasLinha (&mapa);
                 if (!verificarLetrasMaiusculasRepetidasColuna (&mapa)) imprimirLetrasMaiusculasRepetidasColuna (&mapa);
                 if (!verificarCaminhoMaiusculas (&mapa)) imprimirCaminhoMaiusculas (&mapa);
+                if (!verCaminhoMaiusculas (&mapa)) imprimirVerCaminhoMaiusculas(&mapa); 
             }
         }
         else if (c == 'c') {
-            printf ("Coordenadas : Letra minuscula (coluna) e número (linha)\ng (nome do ficheiro) -> Gravar o jogo\nl (nome do ficheiro) -> Fazer load de um ficheiro\nb (coordenada) -> Colocar em Maiúscula\nr (coordenada) -> Riscar uma Letra\nv -> Verificar restrições violadas\na -> Atualizar o jogo de acordo com as regras\nA -> Invocar o comando 'a' enquanto o jogo sofre alterações\nR -> Resolver o jogo\nd -> Desfazer o último comando\ns -> Sair do programa\n");
+            printf ("Coordenadas: Letra minuscula (coluna) e número (linha)\ng (nome do ficheiro) -> Gravar o jogo\nl (nome do ficheiro) -> Fazer load de um ficheiro\nb (coordenada) -> Colocar em Maiúscula\nr (coordenada) -> Riscar uma Letra\nv -> Verificar restrições violadas\na -> Atualizar o jogo de acordo com as regras\nA -> Invocar o comando 'a' enquanto o jogo sofre alterações\nR -> Resolver o jogo\nd -> Desfazer o último comando\ns -> Sair do programa\n");
         }
         imprimir_Matriz (mapa);
+        verCaminhoMaiusculas (&mapa);
     }
     limpar_Pilha (&jogadas);
     limpar_Matriz (&mapa);
-
     return 0;
 }
 #endif
