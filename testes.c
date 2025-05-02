@@ -571,18 +571,17 @@ void test_retirarMatrizDaPilha_umElemento() {
 
 void test_retirarMatrizDaPilha_pilhaVazia() {
     Pilha p;
-    iniciarPilha(&p); // topo = NULL
+    iniciarPilha(&p); 
 
-    retirarMatrizDaPilha(&p); // Deve apenas mostrar a mensagem, sem crash
+    retirarMatrizDaPilha(&p); 
 
-    CU_ASSERT_PTR_NULL(p.topo); // Continua NULL, sem alteração
+    CU_ASSERT_PTR_NULL(p.topo); 
 }
 
 void test_restoraMatrizParaAUltimaJogada_copiaCorreta() {
     Pilha p;
     iniciarPilha(&p);
 
-    // Criar matriz original (2x2)
     Matriz m;
     m.linhas = 2;
     m.colunas = 2;
@@ -590,11 +589,10 @@ void test_restoraMatrizParaAUltimaJogada_copiaCorreta() {
     for (int i = 0; i < 2; i++) {
         m.matriz[i] = malloc(2 * sizeof(char));
         for (int j = 0; j < 2; j++) {
-            m.matriz[i][j] = 'A' + i * 2 + j;  // 'A', 'B', 'C', 'D'
+            m.matriz[i][j] = 'A' + i * 2 + j;  
         }
     }
 
-    // Inserir na pilha
     colocarMatrizNaPilha(&p, m);
 
     // Criar matriz "atual" (com espaço alocado)
@@ -606,10 +604,8 @@ void test_restoraMatrizParaAUltimaJogada_copiaCorreta() {
         atual.matriz[i] = malloc(2 * sizeof(char));
     }
 
-    // Chamar a função a testar
     restoraMatrizParaAUltimaJogada(&p, &atual);
 
-    // Verificações
     CU_ASSERT_EQUAL(atual.matriz[0][0], 'A');
     CU_ASSERT_EQUAL(atual.matriz[0][1], 'B');
     CU_ASSERT_EQUAL(atual.matriz[1][0], 'C');
@@ -633,7 +629,6 @@ void test_limparPilha_umNodo() {
     Pilha p;
     iniciarPilha(&p);
 
-    // Criar matriz 2x2 simples
     Matriz m;
     m.linhas = 2;
     m.colunas = 2;
@@ -658,13 +653,12 @@ void test_limparPilha_umNodo() {
 void test_imprimirCaminhoMaiusculas_simples() {
     Matriz m = criar_Matriz(2, 2);
 
-    // Preenchemos com uma maiúscula isolada
     m.matriz[0][0] = 'A';
     m.matriz[0][1] = 'b';
     m.matriz[1][0] = 'c';
     m.matriz[1][1] = 'd';
 
-    imprimirCaminhoMaiusculas(&m); // Só queremos chamar para cobrir a função!
+    imprimirCaminhoMaiusculas(&m); 
 
     limpar_Matriz(&m);
 }
@@ -673,15 +667,13 @@ void test_imprimirCaminhoMaiusculas_simples() {
 void test_cria_Matriz_copia_simples() {
     Matriz m = criar_Matriz(2, 2);
 
-    // Preenche a matriz original
-    m.matriz[0][0] = 'A'; // Maiúscula
-    m.matriz[0][1] = 'b'; // Minúscula
-    m.matriz[1][0] = 'C'; // Maiúscula
-    m.matriz[1][1] = 'd'; // Minúscula
+    m.matriz[0][0] = 'A'; 
+    m.matriz[0][1] = 'b'; 
+    m.matriz[1][0] = 'C'; 
+    m.matriz[1][1] = 'd'; 
 
     Matriz copia = cria_Matriz_copia(&m); 
 
-    // Só para garantir que a cópia foi feita (sem asserts obrigatórios, pois queremos só cobertura)
     imprimir_Matriz_Ponteiro(&copia);
 
     limpar_Matriz(&m);
@@ -707,7 +699,6 @@ void test_copiaMatrizPara1e0s_minimo() {
 void test_verCaminho_simples() {
     Matriz m = criar_Matriz(3, 3);
 
-    // Simulamos um caminho de '1's
     m.matriz[0][0] = '1'; m.matriz[0][1] = '1'; m.matriz[0][2] = '0';
     m.matriz[1][0] = '0'; m.matriz[1][1] = '1'; m.matriz[1][2] = '0';
     m.matriz[2][0] = '0'; m.matriz[2][1] = '1'; m.matriz[2][2] = '1';
@@ -722,7 +713,6 @@ void test_verCaminho_simples() {
 void test_verCaminhoMatriz_simples() {
     Matriz m = criar_Matriz(3, 3);
 
-    // Montar uma matriz com caminho ligando todas as '1's
     m.matriz[0][0] = '1'; m.matriz[0][1] = '0'; m.matriz[0][2] = '0';
     m.matriz[1][0] = '1'; m.matriz[1][1] = '1'; m.matriz[1][2] = '0';
     m.matriz[2][0] = '0'; m.matriz[2][1] = '1'; m.matriz[2][2] = '1';
@@ -755,17 +745,6 @@ void test_verCaminhoMaiusculas_simples() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 int main() {
     CU_initialize_registry();
 
@@ -774,6 +753,8 @@ int main() {
     CU_add_test(Tarefa1, "Testar imprimir_Matriz simples", test_imprimirMatriz_simples);
     CU_add_test(Tarefa1, "Testar imprimir_Matriz_Ponteiro simples", test_imprimir_Matriz_Ponteiro_simples);
     CU_add_test(Tarefa1, "Testar pintar maiúscula", test_maiuscula_Elem);
+    CU_add_test(Tarefa1, "Testar já maiúscula", test_maiuscula_Elem_ja_maiuscula); 
+    CU_add_test(Tarefa1, "Testar coordenada inválida", test_maiuscula_Elem_coordenada_invalida); 
     CU_add_test(Tarefa1, "Testar riscar célula", test_riscar_Elem);
     CU_add_test(Tarefa1, "Testar ler ficheiro", test_ler_ficheiro);
     CU_add_test(Tarefa1, "Testar ler ficheiro2", test_ler_ficheiro2);
@@ -825,14 +806,6 @@ int main() {
     CU_add_test(Tarefa2, "verifica se ha um caminho valido numa matriz", test_verCaminho_simples);
     CU_add_test(Tarefa2, "verifica se ha um caminho valido numa matriz e devolve 1 ou 0", test_verCaminhoMatriz_simples);
     CU_add_test(Tarefa2, "verifica se ha um caminho valido com maiusculas", test_verCaminhoMaiusculas_simples);
-
-
-
-
-
-
-
-
 
 
 

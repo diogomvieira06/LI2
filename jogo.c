@@ -533,7 +533,7 @@ int main (){
     Matriz mapa = {0, 0, NULL};
     Pilha jogadas;
     iniciarPilha (&jogadas);
-    printf ("Carregue em c e dê enter para ver os comandos.\n");
+    printf ("Carregue em c e dê ENTER para ver os comandos.\n");
 
 //  Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
 //    mapa = ler_ficheiro("Teste de Maiusculas.txt");
