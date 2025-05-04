@@ -449,7 +449,7 @@ void test_iniciarPilha_2() { // neste teste a pilha ja tem valores na memoria ma
     CU_ASSERT_PTR_NULL(p.topo);
 }
 
-void test_verificarCaminhoMaiusculas_simples() {
+void test_verCaminhoMaiusculas_simples() {
     Matriz m = criar_Matriz(3, 3);
 
     for (int i = 0; i < 3; i++)
@@ -459,11 +459,11 @@ void test_verificarCaminhoMaiusculas_simples() {
     m.matriz[0][0] = 'A';
     m.matriz[0][1] = 'B';  
 
-    CU_ASSERT_EQUAL(verificarCaminhoMaiusculas(&m), 1);
+    CU_ASSERT_EQUAL(verCaminhoMaiusculas(&m), 1);
 
     m.matriz[2][2] = 'C';  
 
-    CU_ASSERT_EQUAL(verificarCaminhoMaiusculas(&m), 0);
+    CU_ASSERT_EQUAL(verCaminhoMaiusculas(&m), 0);
 
     limpar_Matriz(&m);
 }
@@ -658,7 +658,7 @@ void test_imprimirCaminhoMaiusculas_simples() {
     m.matriz[1][0] = 'c';
     m.matriz[1][1] = 'd';
 
-    imprimirCaminhoMaiusculas(&m); 
+    imprimirVerCaminhoMaiusculas(&m);
 
     limpar_Matriz(&m);
 }
@@ -678,20 +678,6 @@ void test_cria_Matriz_copia_simples() {
 
     limpar_Matriz(&m);
     limpar_Matriz(&copia);
-}
-
-void test_copiaMatrizPara1e0s_minimo() {
-    Matriz origem = criar_Matriz(1, 1);
-    origem.matriz[0][0] = 'A';
-
-    Matriz destino = criar_Matriz(1, 1);
-
-    copiaMatrizPara1e0s(&origem, &destino);
-
-    CU_ASSERT(destino.matriz[0][0] == '1');
-
-    limpar_Matriz(&origem);
-    limpar_Matriz(&destino);
 }
 
 //verifica se ha um caminho valido na matriz entre 2 coordenadas especificas
@@ -725,7 +711,7 @@ void test_verCaminhoMatriz_simples() {
 
 //Cria uma cópia da matriz com '1' para maiúsculas e '0' para outras.
 //Tenta ver se existe caminho entre todas as '1'.
-void test_verCaminhoMaiusculas_simples() {
+void test_verCaminhoMaiusculas_simples2() {
     Matriz m = criar_Matriz(2, 2);
 
     m.matriz[0][0] = 'A';  
@@ -787,7 +773,7 @@ int main() {
     CU_add_test(Tarefa2, "Imprimir letras riscadas com maiusculas", test_imprimirLetrasRiscadasComMaiusculas);//ver melhor dps
     CU_add_test(Tarefa2, "Imprimir letras maiusculas repetidas na linha", test_imprimirLetrasMaiusculasRepetidasLinha);
     CU_add_test(Tarefa2, "Imprimir letras maiúsculas repetidas na coluna", test_imprimirLetrasMaiusculasRepetidasColuna);
-    CU_add_test(Tarefa2, "Verificar caminho de maiúsculas", test_verificarCaminhoMaiusculas_simples);
+    CU_add_test(Tarefa2, "Verificar caminho de maiúsculas", test_verCaminhoMaiusculas_simples);
     CU_add_test(Tarefa2, "Coluna com repetição de maiúsculas", test_coluna_com_repeticao_maiusculas);
     CU_add_test(Tarefa2, "Colunas com minúsculas repetidas", test_colunas_com_minusculas_repetidas);
     CU_add_test(Tarefa2, "Colunas com matriz vazia", test_colunas_matriz_vazia);
@@ -802,10 +788,9 @@ int main() {
     CU_add_test(Tarefa2, "Limpar pilha com 1 nodo", test_limparPilha_umNodo);
     CU_add_test(Tarefa2, "imprimir caminho maiusculas", test_imprimirCaminhoMaiusculas_simples);
     CU_add_test(Tarefa2, "Testar cria_Matriz_copia simples", test_cria_Matriz_copia_simples);
-    CU_add_test(Tarefa2, "Teste copia matriz", test_copiaMatrizPara1e0s_minimo);
     CU_add_test(Tarefa2, "verifica se ha um caminho valido numa matriz", test_verCaminho_simples);
     CU_add_test(Tarefa2, "verifica se ha um caminho valido numa matriz e devolve 1 ou 0", test_verCaminhoMatriz_simples);
-    CU_add_test(Tarefa2, "verifica se ha um caminho valido com maiusculas", test_verCaminhoMaiusculas_simples);
+    CU_add_test(Tarefa2, "verifica se ha um caminho valido com maiusculas", test_verCaminhoMaiusculas_simples2);
 
 
 

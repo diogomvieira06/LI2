@@ -300,7 +300,6 @@ void imprimirLetrasMaiusculasRepetidasColuna(Matriz *a) {
     printf("\n");
 }
 
-
 void iniciarPilha (Pilha *a) {
     a->topo = NULL;
 }
@@ -388,47 +387,47 @@ void gravar_ficheiro(Matriz a, const char *nome_Ficheiro) {
 
 
 
-int verificarCaminhoMaiusculas(Matriz *a) {
-    int i, j, r = 1;
+//int verificarCaminhoMaiusculas(Matriz *a) {
+//    int i, j, r = 1;
+//
+//    for (i = 0; i < a->linhas; i++) {
+//        for (j = 0; j < a->colunas; j++) {
+//            if (ehMaiuscula(a->matriz[i][j])) {
+//                int cima = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
+//                int baixo = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
+//                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
+//                int direita= (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
+//                // pus assim para ser mais facil de perceber, mas a funçao funciona como estava antes
+//                if (!cima && !baixo && !esquerda && !direita) {
+//                    r = 0;
+//                }
+//            }
+//        }
+//    }
+//    return r;
+//}
 
-    for (i = 0; i < a->linhas; i++) {
-        for (j = 0; j < a->colunas; j++) {
-            if (ehMaiuscula(a->matriz[i][j])) {
-                int cima = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
-                int baixo = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
-                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
-                int direita= (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
-                // pus assim para ser mais facil de perceber, mas a funçao funciona como estava antes
-                if (!cima && !baixo && !esquerda && !direita) {
-                    r = 0;
-                }
-            }
-        }
-    }
-    return r;
-}
 
-
-void imprimirCaminhoMaiusculas(Matriz *a) {
-    int i, j;
-    printf("Regra de caminho ortogonal para outra Maiúscula: ");
-
-    for (i = 0; i < a->linhas; i++) {
-        for (j = 0; j < a->colunas; j++) {
-            if (ehMaiuscula(a->matriz[i][j])) {
-                int cima     = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
-                int baixo    = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
-                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
-                int direita  = (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
-
-                if (!cima && !baixo && !esquerda && !direita) {
-                    printf("%c %d, ", j + 97, i + 1); 
-                }
-            }
-        }
-    }
-    printf("\n");
-}
+//void imprimirCaminhoMaiusculas(Matriz *a) {
+//    int i, j;
+//    printf("Regra de caminho ortogonal para outra Maiúscula: ");
+//
+//    for (i = 0; i < a->linhas; i++) {
+//        for (j = 0; j < a->colunas; j++) {
+//            if (ehMaiuscula(a->matriz[i][j])) {
+//                int cima     = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
+//                int baixo    = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
+//                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
+//                int direita  = (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
+//
+//                if (!cima && !baixo && !esquerda && !direita) {
+//                    printf("%c %d, ", j + 97, i + 1); 
+//                }
+//            }
+//        }
+//    }
+//    printf("\n");
+//}
 
 Matriz cria_Matriz_copia (Matriz *a) {
     int i, j;
@@ -443,16 +442,6 @@ Matriz cria_Matriz_copia (Matriz *a) {
 }
 
 
-Matriz copiaMatrizPara1e0s (Matriz *origem, Matriz *destino) {
-    int i, j;
-    for (i = 0; i < origem->linhas; i++) {
-        for (j = 0; j < origem->colunas; j++) {
-            if (ehMaiuscula (origem->matriz[i][j])) destino->matriz[i][j] = '1';
-            else destino->matriz[i][j] = '0';
-        }
-    }
-    return *destino;    
-}
 
 int verCaminho(Matriz *a, int linha1, int coluna1, int linha2, int coluna2) {
     // Condição base: se chegamos ao destino
@@ -516,13 +505,34 @@ int verCaminhoMatriz (Matriz *a) {
 int verCaminhoMaiusculas (Matriz *a) {
     int r;
     Matriz copiaPara_1e0s = cria_Matriz_copia (a);
-    imprimir_Matriz_Ponteiro (&copiaPara_1e0s);
     r = verCaminhoMatriz (&copiaPara_1e0s);
     limpar_Matriz (&copiaPara_1e0s);
     return r;
 }
 
-void imprimirVerCaminhoMaiusculas (Matriz *a) {
+void imprimirVerCaminhoMaiusculas(Matriz *a) {
+    printf ("Não existe caminho entre: ");
+    Matriz copiaPara_1e0s = cria_Matriz_copia (a);
+    int i, j;
+    for (i = 0; i < copiaPara_1e0s.linhas; i++) {
+        for (j = 0; j < copiaPara_1e0s.colunas; j++) {
+            if (copiaPara_1e0s.matriz[i][j] == '1') {
+                int i2, j2 = j+1;
+                for (i2 = i; i2 < copiaPara_1e0s.linhas; i2++) {
+                    for (; j2 < copiaPara_1e0s.linhas; j2++) {
+                        if (copiaPara_1e0s.matriz[i2][j2] == '1') {
+                            if (!verCaminho(&copiaPara_1e0s, i, j, i2, j2)) {
+                                printf ("(%c%d, %c%d) ", j+97, i+1, j2+97, i2+1);
+                            }
+                        }
+                    }
+                    j2 = 0;
+                }
+            }
+        }
+    }
+    printf ("\n");
+    limpar_Matriz (&copiaPara_1e0s);
 }
 
 #ifndef TESTING
@@ -533,7 +543,7 @@ int main (){
     Matriz mapa = {0, 0, NULL};
     Pilha jogadas;
     iniciarPilha (&jogadas);
-    printf ("Carregue em c e dê ENTER para ver os comandos.\n");
+    printf ("Carregue em c e dê enter para ver os comandos.\n");
 
 //  Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
 //    mapa = ler_ficheiro("Teste de Maiusculas.txt");
@@ -584,7 +594,7 @@ int main (){
             gravar_ficheiro (mapa, nome_Ficheiro);
         }
         else if (c == 'v') {
-            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verificarCaminhoMaiusculas (&mapa) && verCaminhoMaiusculas (&mapa)) {
+            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verCaminhoMaiusculas (&mapa)) {
                 printf ("Nenhuma regra violada.\n");
             }
             else {
@@ -593,7 +603,6 @@ int main (){
                 if (!verificarLetrasRiscadasComMaiusculas (&mapa)) imprimirLetrasRiscadasComMaiusculas (&mapa);
                 if (!verificarLetrasMaiusculasRepetidasLinha (&mapa)) imprimirLetrasMaiusculasRepetidasLinha (&mapa);
                 if (!verificarLetrasMaiusculasRepetidasColuna (&mapa)) imprimirLetrasMaiusculasRepetidasColuna (&mapa);
-                if (!verificarCaminhoMaiusculas (&mapa)) imprimirCaminhoMaiusculas (&mapa);
                 if (!verCaminhoMaiusculas (&mapa)) imprimirVerCaminhoMaiusculas(&mapa); 
             }
         }
@@ -601,7 +610,6 @@ int main (){
             printf ("Coordenadas: Letra minuscula (coluna) e número (linha)\ng (nome do ficheiro) -> Gravar o jogo\nl (nome do ficheiro) -> Fazer load de um ficheiro\nb (coordenada) -> Colocar em Maiúscula\nr (coordenada) -> Riscar uma Letra\nv -> Verificar restrições violadas\na -> Atualizar o jogo de acordo com as regras\nA -> Invocar o comando 'a' enquanto o jogo sofre alterações\nR -> Resolver o jogo\nd -> Desfazer o último comando\ns -> Sair do programa\n");
         }
         imprimir_Matriz (mapa);
-        verCaminhoMaiusculas (&mapa);
     }
     limpar_Pilha (&jogadas);
     limpar_Matriz (&mapa);

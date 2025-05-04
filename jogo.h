@@ -44,14 +44,10 @@ void retirarMatrizDaPilha (Pilha *a);
 void restoraMatrizParaAUltimaJogada (Pilha *a, Matriz *atual);
 void limpar_Pilha (Pilha *a);
 void gravar_ficheiro(Matriz a, const char *nome_Ficheiro);
-int verificarCaminhoMaiusculas(Matriz *a);
-void imprimirCaminhoMaiusculas(Matriz *a);
 Matriz cria_Matriz_copia (Matriz *a);
-Matriz copiaMatrizPara1e0s (Matriz *origem, Matriz *destino);
 int verCaminho(Matriz *a, int linha1, int coluna1, int linha2, int coluna2);
 int verCaminhoMatriz (Matriz *a);
 int verCaminhoMaiusculas (Matriz *a);
-
-
+void imprimirVerCaminhoMaiusculas(Matriz *a);
 
 #endif // JOGO_H
