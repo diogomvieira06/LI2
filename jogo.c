@@ -60,7 +60,7 @@ void imprimir_Matriz (Matriz a) {
         printf("\n");
     }
 }
-
+/*
 void imprimir_Matriz_Ponteiro (Matriz *a) {
     int i, j;
     for (i=0 ; i < a->linhas; i++) {
@@ -70,7 +70,19 @@ void imprimir_Matriz_Ponteiro (Matriz *a) {
         printf("\n");
     }
 }
+*/
 
+void imprimir_Matriz_Ponteiro (Matriz *a, int ultima_linha, int ultima_coluna) {
+    for (int i = 0; i < a->linhas; i++) {
+        for (int j = 0; j < a->colunas; j++) {
+            if (i == ultima_linha && j == ultima_coluna)
+                printf("\033[93m%c \033[0m", a->matriz[i][j]);  // Amarelo
+            else
+                printf("%c ", a->matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
 
 void maiuscula_Elem (Matriz a, char x, int y) {
     int linha = y - 1;
@@ -570,6 +582,7 @@ int main (){
     Matriz mapa = {0, 0, NULL};
     Pilha jogadas;
     iniciarPilha (&jogadas);
+    int ultima_linha = -1, ultima_coluna = -1;
     printf ("Carregue em c e dê ENTER para ver os comandos.\n");
 
 //  Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
@@ -577,83 +590,114 @@ int main (){
 //    imprimir_Matriz (mapa);
 //    colocarMatrizNaPilha (&jogadas, mapa);
 
-    while (1) {   
-        if (scanf(" %c", &c) != 1) printf ("Erro1");
-        if (c == 'l') {
-            char nome_Ficheiro[100];
-            if (scanf ("%s", nome_Ficheiro) != 1) printf ("Erro2");
-            limpar_Matriz (&mapa);
-            mapa = ler_ficheiro (nome_Ficheiro);
+while (1) {
+    if (scanf(" %c", &c) != 1) printf ("Erro1");
+    if (c == 'l') {
+        char nome_Ficheiro[100];
+        if (scanf ("%s", nome_Ficheiro) != 1) printf ("Erro2");
+        limpar_Matriz (&mapa);
+        mapa = ler_ficheiro (nome_Ficheiro);
+        colocarMatrizNaPilha (&jogadas, mapa);
+        ultima_linha = -1; ultima_coluna = -1;  // reset
+    }
+    else if (c == 'b') {
+        if (scanf (" %c %d", &x, &y) != 2) printf ("Erro3");
+        else if (x > (mapa.colunas - 1) + 'a' || y > mapa.linhas)
+            printf ("A coordenada (%c, %d) não está dentro da matriz.\n", x, y);
+        else if (!(mapa.matriz[y-1][x -'a'] >= 'a' && mapa.matriz[y-1][x -'a'] <= 'z'))
+            printf ("A coordenada (%c, %d) não é uma letra minúscula\n", x, y);
+        else {
+            maiuscula_Elem (mapa, x, y);
+            ultima_linha = y - 1;                // ← NOVO
+            ultima_coluna = x - 'a';            // ← NOVO
             colocarMatrizNaPilha (&jogadas, mapa);
-        }
-        else if (c == 'b') {
-            if (scanf (" %c %d", &x, &y) != 2) printf ("Erro3");
-            else if (x > (mapa.colunas - 1) + 'a' || y > mapa.linhas) printf ("A coordenada (%c, %d) não está dentro da matriz.\n", x, y);
-            else if (!(mapa.matriz[y-1][x -'a'] >= 'a' && mapa.matriz[y-1][x -'a'] <= 'z')) printf ("A coordenada (%c, %d) não é uma letra minúscula\n", x, y);
-            else {
-                maiuscula_Elem (mapa, x, y);
-                colocarMatrizNaPilha (&jogadas, mapa);
-            }
-        }
-        else if (c == 'r') {
-            if (scanf (" %c %d", &x, &y) != 2) printf ("Coordenadas inválidas\n");
-            else if (x > (mapa.colunas - 1) + 'a' || y > mapa.linhas) printf ("A coordenada (%c, %d) não está dentro da matriz.\n", x, y);
-            else if (mapa.matriz[y-1][x -'a'] == '#') printf ("A coordenada (%c, %d) já está riscada\n", x, y);
-            else if (ehMaiuscula(mapa.matriz[y-1][x -'a'])) printf ("Não é possível riscar a coordenada (%c, %d), pois é uma letra Maiúscula\n", x, y);
-            else {
-                riscar_Elem (mapa, x, y);
-                colocarMatrizNaPilha (&jogadas, mapa);
-            }
-        }
-        else if (c == 's') {
-        break;
-        }
-        else if (c == 'd') {
-            if (jogadas.topo->proximo == NULL) printf ("Não é possível recuar mais jogadas.\n");
-            else {
-                retirarMatrizDaPilha (&jogadas);
-                restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
-            }
-        }
-        else if (c == 'g') {
-            char nome_Ficheiro[100];
-            if (scanf ("%s", nome_Ficheiro) != 1) printf ("Erro2");
-            gravar_ficheiro (mapa, nome_Ficheiro);
-        }
-        else if (c == 'v') {
-            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verCaminhoMaiusculas (&mapa)) {
-                printf ("Nenhuma regra violada.\n");
-            }
-            else {
-                printf ("Coordenadas com Regras violadas:\n");
-                if (!verificarLetrasRiscadas (&mapa)) imprimirLetrasRiscadas (&mapa);
-                if (!verificarLetrasRiscadasComMaiusculas (&mapa)) imprimirLetrasRiscadasComMaiusculas (&mapa);
-                if (!verificarLetrasMaiusculasRepetidasLinha (&mapa)) imprimirLetrasMaiusculasRepetidasLinha (&mapa);
-                if (!verificarLetrasMaiusculasRepetidasColuna (&mapa)) imprimirLetrasMaiusculasRepetidasColuna (&mapa);
-                if (!verCaminhoMaiusculas (&mapa)) imprimirVerCaminhoMaiusculas(&mapa); 
-            }
-        }
-        else if (c == 'c') {
-            printf ("Coordenadas: Letra minuscula (coluna) e número (linha)\ng (nome do ficheiro) -> Gravar o jogo\nl (nome do ficheiro) -> Fazer load de um ficheiro\nb (coordenada) -> Colocar em Maiúscula\nr (coordenada) -> Riscar uma Letra\nv -> Verificar restrições violadas\na -> Atualizar o jogo de acordo com as regras\nA -> Invocar o comando 'a' enquanto o jogo sofre alterações\nR -> Resolver o jogo\nd -> Desfazer o último comando\ns -> Sair do programa\n");
-        }
-        else if (c == 'a') {
-            coloca_Em_Maiuscula_Pela_Riscada (&mapa);
-            risca_Minusculas_Repetidas (&mapa);
-            //coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
-            colocarMatrizNaPilha (&jogadas, mapa);
-        }
-        else printf ("Comando Inválido \n");
-        imprimir_Matriz (mapa);
-        if (quant_Minusculas (&mapa) == 0) {
-            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verCaminhoMaiusculas (&mapa)) {
-                printf ("Jogo Ganho!\n");
-                break;
-            }
-            else printf ("Algo não está certo!\n");
         }
     }
-    limpar_Pilha (&jogadas);
-    limpar_Matriz (&mapa);
-    return 0;
+    else if (c == 'r') {
+        if (scanf (" %c %d", &x, &y) != 2) printf ("Coordenadas inválidas\n");
+        else if (x > (mapa.colunas - 1) + 'a' || y > mapa.linhas)
+            printf ("A coordenada (%c, %d) não está dentro da matriz.\n", x, y);
+        else if (mapa.matriz[y-1][x -'a'] == '#')
+            printf ("A coordenada (%c, %d) já está riscada\n", x, y);
+        else if (ehMaiuscula(mapa.matriz[y-1][x -'a']))
+            printf ("Não é possível riscar a coordenada (%c, %d), pois é uma letra Maiúscula\n", x, y);
+        else {
+            riscar_Elem (mapa, x, y);
+            ultima_linha = y - 1;                // ← NOVO
+            ultima_coluna = x - 'a';            // ← NOVO
+            colocarMatrizNaPilha (&jogadas, mapa);
+        }
+    }
+    else if (c == 's') break;
+
+    else if (c == 'd') {
+        if (jogadas.topo->proximo == NULL)
+            printf ("Não é possível recuar mais jogadas.\n");
+        else {
+            retirarMatrizDaPilha (&jogadas);
+            restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
+            ultima_linha = -1; ultima_coluna = -1;  // reset
+        }
+    }
+    else if (c == 'g') {
+        char nome_Ficheiro[100];
+        if (scanf ("%s", nome_Ficheiro) != 1) printf ("Erro2");
+        gravar_ficheiro (mapa, nome_Ficheiro);
+    }
+    else if (c == 'v') {
+        if (verificarLetrasRiscadas (&mapa) &&
+            verificarLetrasRiscadasComMaiusculas (&mapa) &&
+            verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
+            verificarLetrasMaiusculasRepetidasColuna (&mapa) &&
+            verCaminhoMaiusculas (&mapa)) {
+            printf ("Nenhuma regra violada.\n");
+        }
+        else {
+            printf ("Coordenadas com Regras violadas:\n");
+            if (!verificarLetrasRiscadas (&mapa)) imprimirLetrasRiscadas (&mapa);
+            if (!verificarLetrasRiscadasComMaiusculas (&mapa)) imprimirLetrasRiscadasComMaiusculas (&mapa);
+            if (!verificarLetrasMaiusculasRepetidasLinha (&mapa)) imprimirLetrasMaiusculasRepetidasLinha (&mapa);
+            if (!verificarLetrasMaiusculasRepetidasColuna (&mapa)) imprimirLetrasMaiusculasRepetidasColuna (&mapa);
+            if (!verCaminhoMaiusculas (&mapa)) imprimirVerCaminhoMaiusculas(&mapa); 
+        }
+    }
+    else if (c == 'c') {
+        printf ("Comandos disponíveis:\n");
+        printf ("l (ficheiro) → Carregar jogo\n");
+        printf ("g (ficheiro) → Gravar jogo\n");
+        printf ("b x y → Colocar em Maiúscula\n");
+        printf ("r x y → Riscar letra\n");
+        printf ("d → Desfazer jogada\n");
+        printf ("a → Atualizar matriz\n");
+        printf ("v → Verificar regras\n");
+        printf ("s → Sair\n");
+    }
+    else if (c == 'a') {
+        coloca_Em_Maiuscula_Pela_Riscada (&mapa);
+        risca_Minusculas_Repetidas (&mapa);
+        colocarMatrizNaPilha (&jogadas, mapa);
+        ultima_linha = -1; ultima_coluna = -1;
+    }
+    else printf ("Comando Inválido\n");
+
+    // Imprimir com realce na última jogada
+    imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
+
+    if (quant_Minusculas (&mapa) == 0) {
+        if (verificarLetrasRiscadas (&mapa) &&
+            verificarLetrasRiscadasComMaiusculas (&mapa) &&
+            verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
+            verificarLetrasMaiusculasRepetidasColuna (&mapa) &&
+            verCaminhoMaiusculas (&mapa)) {
+            printf ("Jogo Ganho!\n");
+            break;
+        }
+        else printf ("Algo não está certo!\n");
+    }
+}
+
+limpar_Pilha (&jogadas);
+limpar_Matriz (&mapa);
+return 0;
 }
 #endif

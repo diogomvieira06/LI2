@@ -41,7 +41,7 @@ void test_imprimir_Matriz_Ponteiro_simples() {
     m.matriz[0][0] = 'a'; m.matriz[0][1] = 'b';
     m.matriz[1][0] = 'c'; m.matriz[1][1] = 'd';
 
-    imprimir_Matriz_Ponteiro(&m);
+    imprimir_Matriz_Ponteiro(&m,0 ,1);
 
     limpar_Matriz(&m);
 }
@@ -674,7 +674,7 @@ void test_cria_Matriz_copia_simples() {
 
     Matriz copia = cria_Matriz_copia(&m); 
 
-    imprimir_Matriz_Ponteiro(&copia);
+    imprimir_Matriz_Ponteiro(&copia, 0, 0);
 
     limpar_Matriz(&m);
     limpar_Matriz(&copia);

@@ -26,7 +26,7 @@ Matriz criar_Matriz(int linhas, int colunas);
 void limpar_Matriz(Matriz *a);
 Matriz ler_ficheiro(const char *nome_Ficheiro);
 void imprimir_Matriz(Matriz a);
-void imprimir_Matriz_Ponteiro(Matriz *a);
+void imprimir_Matriz_Ponteiro (Matriz *a, int ultima_linha, int ultima_coluna);
 void maiuscula_Elem(Matriz a, char x, int y);
 void riscar_Elem(Matriz a, char x, int y);
 int ehMaiuscula (char a);
