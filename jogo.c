@@ -386,49 +386,6 @@ void gravar_ficheiro(Matriz a, const char *nome_Ficheiro) {
 }
 
 
-
-//int verificarCaminhoMaiusculas(Matriz *a) {
-//    int i, j, r = 1;
-//
-//    for (i = 0; i < a->linhas; i++) {
-//        for (j = 0; j < a->colunas; j++) {
-//            if (ehMaiuscula(a->matriz[i][j])) {
-//                int cima = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
-//                int baixo = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
-//                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
-//                int direita= (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
-//                // pus assim para ser mais facil de perceber, mas a funçao funciona como estava antes
-//                if (!cima && !baixo && !esquerda && !direita) {
-//                    r = 0;
-//                }
-//            }
-//        }
-//    }
-//    return r;
-//}
-
-
-//void imprimirCaminhoMaiusculas(Matriz *a) {
-//    int i, j;
-//    printf("Regra de caminho ortogonal para outra Maiúscula: ");
-//
-//    for (i = 0; i < a->linhas; i++) {
-//        for (j = 0; j < a->colunas; j++) {
-//            if (ehMaiuscula(a->matriz[i][j])) {
-//                int cima     = (i > 0 && ehMaiuscula(a->matriz[i - 1][j]));
-//                int baixo    = (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j]));
-//                int esquerda = (j > 0 && ehMaiuscula(a->matriz[i][j - 1]));
-//                int direita  = (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
-//
-//                if (!cima && !baixo && !esquerda && !direita) {
-//                    printf("%c %d, ", j + 97, i + 1); 
-//                }
-//            }
-//        }
-//    }
-//    printf("\n");
-//}
-
 Matriz cria_Matriz_copia (Matriz *a) {
     int i, j;
     Matriz visitado = criar_Matriz(a->linhas, a->colunas);
@@ -535,6 +492,73 @@ void imprimirVerCaminhoMaiusculas(Matriz *a) {
     limpar_Matriz (&copiaPara_1e0s);
 }
 
+void risca_Minusculas_Repetidas (Matriz *a) {
+    int i, j;
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMaiuscula(a->matriz[i][j])) {
+                int i2, j2;
+                for (i2 = 0; i2 < a->linhas; i2++) {
+                    if (a->matriz[i2][j] == a->matriz [i][j] + 32) a->matriz [i2][j] = '#';
+                }
+                for (j2 = 0; j2 < a->colunas; j2++) {
+                    if (a->matriz[i][j2] == a->matriz [i][j] + 32) a->matriz [i][j2] = '#';
+                }
+            }
+        }
+    }
+}
+
+int ehMinuscula (char a) {
+    if (a >= 97 && a <= 122) {
+        return 1;
+    }
+    else return 0;
+}
+
+void coloca_Em_Maiuscula_Pela_Riscada (Matriz *a) {
+    int i, j;
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (a->matriz[i][j] == '#') {
+                if (i > 0 && ehMinuscula(a->matriz[i-1][j])) a->matriz[i-1][j] = a->matriz[i-1][j] - 32;
+                if (i < a->linhas - 1 && ehMinuscula(a->matriz[i+1][j])) a->matriz[i+1][j] = a->matriz[i+1][j] - 32;
+                if (j > 0 && ehMinuscula(a->matriz[i][j-1])) a->matriz[i][j-1] = a->matriz[i][j-1] - 32;
+                if (j < a->colunas - 1 && ehMinuscula(a->matriz[i][j+1])) a->matriz[i][j+1] = a->matriz[i][j+1] - 32;
+            }
+        }
+    }
+}
+
+void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a) {
+    int i, j;
+
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMaiuscula(a->matriz[i][j])) {
+                int cima     = (i > 0 && ehMinuscula(a->matriz[i - 1][j]));
+                int baixo    = (i < a->linhas - 1 && ehMinuscula(a->matriz[i + 1][j]));
+                int esquerda = (j > 0 && ehMinuscula(a->matriz[i][j - 1]));
+                int direita  = (j < a->colunas - 1 && ehMinuscula(a->matriz[i][j + 1]));
+                if (cima && !(baixo || esquerda || direita)) a->matriz[i-1][j] = a->matriz[i-1][j] - 32;
+                if (baixo && !(cima || esquerda || direita)) a->matriz[i+1][j] = a->matriz[i+1][j] - 32;
+                if (esquerda && !(cima || baixo || direita)) a->matriz[i][j-1] = a->matriz[i][j-1] - 32;
+                if (direita && !(cima || baixo || esquerda)) a->matriz[i][j+1] = a->matriz[i][j+1] - 32; 
+            }
+        }
+    }
+}
+
+int quant_Minusculas (Matriz *a) {
+    int i, j, cont = 0;
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMinuscula(a->matriz[i][j])) cont++;
+        }
+    }
+    return cont;
+}
+
 #ifndef TESTING
 
 int main (){
@@ -543,7 +567,7 @@ int main (){
     Matriz mapa = {0, 0, NULL};
     Pilha jogadas;
     iniciarPilha (&jogadas);
-    printf ("Carregue em c e dê enter para ver os comandos.\n");
+    printf ("Carregue em c e dê ENTER para ver os comandos.\n");
 
 //  Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
 //    mapa = ler_ficheiro("Teste de Maiusculas.txt");
@@ -609,7 +633,21 @@ int main (){
         else if (c == 'c') {
             printf ("Coordenadas: Letra minuscula (coluna) e número (linha)\ng (nome do ficheiro) -> Gravar o jogo\nl (nome do ficheiro) -> Fazer load de um ficheiro\nb (coordenada) -> Colocar em Maiúscula\nr (coordenada) -> Riscar uma Letra\nv -> Verificar restrições violadas\na -> Atualizar o jogo de acordo com as regras\nA -> Invocar o comando 'a' enquanto o jogo sofre alterações\nR -> Resolver o jogo\nd -> Desfazer o último comando\ns -> Sair do programa\n");
         }
+        else if (c == 'a') {
+            coloca_Em_Maiuscula_Pela_Riscada (&mapa);
+            risca_Minusculas_Repetidas (&mapa);
+            //coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
+            colocarMatrizNaPilha (&jogadas, mapa);
+        }
+        else printf ("Comando Inválido \n");
         imprimir_Matriz (mapa);
+        if (quant_Minusculas (&mapa) == 0) {
+            if (verificarLetrasRiscadas (&mapa) && verificarLetrasRiscadasComMaiusculas (&mapa) && verificarLetrasMaiusculasRepetidasLinha (&mapa) && verificarLetrasMaiusculasRepetidasColuna (&mapa) && verCaminhoMaiusculas (&mapa)) {
+                printf ("Jogo Ganho!\n");
+                break;
+            }
+            else printf ("Algo não está certo!\n");
+        }
     }
     limpar_Pilha (&jogadas);
     limpar_Matriz (&mapa);
