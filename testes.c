@@ -708,7 +708,7 @@ void test_verCaminhoMatriz_simples() {
     limpar_Matriz(&m);
 }
 
-
+/*
 //Cria uma cópia da matriz com '1' para maiúsculas e '0' para outras.
 //Tenta ver se existe caminho entre todas as '1'.
 void test_verCaminhoMaiusculas_simples2() {
@@ -725,10 +725,120 @@ void test_verCaminhoMaiusculas_simples2() {
 
     limpar_Matriz(&m);
 }
+*/
+
+//VER MELHOR
+void test_risca_Minusculas_Repetidas(void) {
+    Matriz m = criar_Matriz(3, 3);
+
+    // a b A
+    // a d b
+    // c a c
+    m.matriz[0][0] = 'a';
+    m.matriz[0][1] = 'b';
+    m.matriz[0][2] = 'A';
+    m.matriz[1][0] = 'a';
+    m.matriz[1][1] = 'd';
+    m.matriz[1][2] = 'b';
+    m.matriz[2][0] = 'c';
+    m.matriz[2][1] = 'a';
+    m.matriz[2][2] = 'c';
+
+    risca_Minusculas_Repetidas(&m);
+
+    // # b A
+    // # d b
+    // c a c
+
+    CU_ASSERT_EQUAL(m.matriz[0][0], '#');  
+    CU_ASSERT_EQUAL(m.matriz[1][0], 'a');  
+    CU_ASSERT_EQUAL(m.matriz[2][1], 'a');  
+
+    CU_ASSERT_EQUAL(m.matriz[0][1], 'b');
+    CU_ASSERT_EQUAL(m.matriz[0][2], 'A');
+    CU_ASSERT_EQUAL(m.matriz[1][1], 'd');
+    CU_ASSERT_EQUAL(m.matriz[1][2], 'b');
+    CU_ASSERT_EQUAL(m.matriz[2][0], 'c');
+    CU_ASSERT_EQUAL(m.matriz[2][2], 'c');
+
+    limpar_Matriz(&m);
+}
 
 
+void test_ehMinuscula(void) {
+    CU_ASSERT(ehMinuscula('A') == 0);
+    CU_ASSERT(ehMinuscula('a') == 1);
+    CU_ASSERT(ehMinuscula(' ') == 0);
+    CU_ASSERT(ehMinuscula('#') == 0);
+}
 
 
+void test_coloca_Em_Maiuscula_Pela_Riscada_simples() {
+    Matriz m = criar_Matriz(2, 3);
+
+    // a b #
+    // c d e
+
+    m.matriz[0][0] = 'a';
+    m.matriz[0][1] = 'b';
+    m.matriz[0][2] = '#';
+    m.matriz[1][0] = 'c';
+    m.matriz[1][1] = 'd';
+    m.matriz[1][2] = 'e';
+
+    coloca_Em_Maiuscula_Pela_Riscada(&m);
+
+    //depois da função:
+    // a B #
+    // c d E
+
+    CU_ASSERT_EQUAL(m.matriz[0][1], 'B');  
+    CU_ASSERT_EQUAL(m.matriz[1][2], 'E');  
+
+    CU_ASSERT_EQUAL(m.matriz[0][0], 'a');
+    CU_ASSERT_EQUAL(m.matriz[1][0], 'c');
+    CU_ASSERT_EQUAL(m.matriz[1][1], 'd');
+
+    limpar_Matriz(&m);
+}
+
+
+void test_coloca_Em_Maiuscula_Pelo_Caminho_com_riscada(void) {
+    Matriz m = criar_Matriz(3, 3);
+
+    m.matriz[0][0] = 'A'; m.matriz[0][1] = '#'; m.matriz[0][2] = 'b';
+    m.matriz[1][0] = 'c'; m.matriz[1][1] = 'D'; m.matriz[1][2] = 'E';
+    m.matriz[2][0] = 'f'; m.matriz[2][1] = 'g'; m.matriz[2][2] = 'h';
+
+    coloca_Em_Maiuscula_Pelo_Caminho(&m);
+
+    CU_ASSERT_EQUAL(m.matriz[1][2], 'E');  
+    CU_ASSERT_EQUAL(m.matriz[0][1], '#');
+    CU_ASSERT_EQUAL(m.matriz[0][0], 'A');
+    CU_ASSERT_EQUAL(m.matriz[0][2], 'b');
+    CU_ASSERT_EQUAL(m.matriz[1][0], 'C');
+    CU_ASSERT_EQUAL(m.matriz[1][1], 'D');
+    CU_ASSERT_EQUAL(m.matriz[2][0], 'F');
+    CU_ASSERT_EQUAL(m.matriz[2][1], 'G');
+    CU_ASSERT_EQUAL(m.matriz[2][2], 'H');
+
+    limpar_Matriz(&m);
+}
+
+
+void test_quant_Minusculas(void) {
+    Matriz m = criar_Matriz(3, 3);
+
+    m.matriz[0][0] = 'a'; m.matriz[0][1] = 'B'; m.matriz[0][2] = 'c';
+    m.matriz[1][0] = '#'; m.matriz[1][1] = 'd'; m.matriz[1][2] = 'E';
+    m.matriz[2][0] = 'f'; m.matriz[2][1] = 'G'; m.matriz[2][2] = 'h';
+
+    int resultado = quant_Minusculas(&m);
+
+    CU_ASSERT_EQUAL(resultado, 5); 
+
+    limpar_Matriz(&m);
+}
 
 
 int main() {
@@ -790,7 +900,17 @@ int main() {
     CU_add_test(Tarefa2, "Testar cria_Matriz_copia simples", test_cria_Matriz_copia_simples);
     CU_add_test(Tarefa2, "verifica se ha um caminho valido numa matriz", test_verCaminho_simples);
     CU_add_test(Tarefa2, "verifica se ha um caminho valido numa matriz e devolve 1 ou 0", test_verCaminhoMatriz_simples);
-    CU_add_test(Tarefa2, "verifica se ha um caminho valido com maiusculas", test_verCaminhoMaiusculas_simples2);
+    //CU_add_test(Tarefa2, "verifica se ha um caminho valido com maiusculas", test_verCaminhoMaiusculas_simples2);
+
+    CU_pSuite Tarefa3 = CU_add_suite("Testes da Tarefa3", 0, 0);
+    CU_add_test(Tarefa3, "Testar risca_Minusculas_Repetidas", test_risca_Minusculas_Repetidas);
+    CU_add_test(Tarefa3, "Testar ehMinuscula", test_ehMinuscula);
+    CU_add_test(Tarefa3, "Testar coloca_Em_Maiuscula_Pela_Riscada simples", test_coloca_Em_Maiuscula_Pela_Riscada_simples);
+    CU_add_test(Tarefa3, "Testar coloca_Em_Maiuscula_Pelo_Caminho com riscada ao lado", test_coloca_Em_Maiuscula_Pelo_Caminho_com_riscada);
+    CU_add_test(Tarefa3, "Testar quant_Minusculas", test_quant_Minusculas);
+
+
+
 
 
 

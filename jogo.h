@@ -49,5 +49,10 @@ int verCaminho(Matriz *a, int linha1, int coluna1, int linha2, int coluna2);
 int verCaminhoMatriz (Matriz *a);
 int verCaminhoMaiusculas (Matriz *a);
 void imprimirVerCaminhoMaiusculas(Matriz *a);
+void risca_Minusculas_Repetidas (Matriz *a);
+void coloca_Em_Maiuscula_Pela_Riscada (Matriz *a);
+int ehMinuscula (char a);
+void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a);
+int quant_Minusculas (Matriz *a);
 
 #endif // JOGO_H

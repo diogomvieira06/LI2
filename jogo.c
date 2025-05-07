@@ -516,6 +516,8 @@ int ehMinuscula (char a) {
     else return 0;
 }
 
+
+//para cada celula riscada, transforma as letras minusculas ortogonalmente adjacentes em maiusculas
 void coloca_Em_Maiuscula_Pela_Riscada (Matriz *a) {
     int i, j;
     for (i = 0; i < a->linhas; i++) {
@@ -530,6 +532,7 @@ void coloca_Em_Maiuscula_Pela_Riscada (Matriz *a) {
     }
 }
 
+//para casa letra maiuscula, verifica se exatamente um vizinho ortogonal é minusculo e se isso for verdade, esse vizinho passa a maiusculo
 void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a) {
     int i, j;
 
