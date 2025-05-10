@@ -172,10 +172,10 @@ int verificarLetrasRiscadasComMaiusculas(Matriz *a) {
     for (i = 0; i < a->linhas; i++) {
         for (j = 0; j < a->colunas; j++) {
             if (a->matriz[i][j] == '#') {
-                int cima = (i > 0 && !ehMaiuscula(a->matriz[i - 1][j]));
-                int baixo = (i < a->linhas - 1 && !ehMaiuscula(a->matriz[i + 1][j]));
-                int esquerda = (j > 0 && !ehMaiuscula(a->matriz[i][j - 1]));
-                int direita= (j < a->colunas - 1 && !ehMaiuscula(a->matriz[i][j + 1]));
+                int cima = (i > 0 && (ehMinuscula(a->matriz[i - 1][j]) || a->matriz[i - 1][j] == '#'));
+                int baixo = (i < a->linhas - 1 && (ehMinuscula(a->matriz[i + 1][j]) || a->matriz[i + 1][j] == '#'));
+                int esquerda = (j > 0 && (ehMinuscula(a->matriz[i][j - 1]) || a->matriz[i][j - 1] == '#'));
+                int direita= (j < a->colunas - 1 && (ehMinuscula(a->matriz[i][j + 1]) || a->matriz[i][j + 1] == '#'));
                 // pus assim para ser mais facil de perceber, mas a funçao funciona como estava antes
                 if (cima || baixo || esquerda || direita) {
                     r = 0;
@@ -504,6 +504,24 @@ void imprimirVerCaminhoMaiusculas(Matriz *a) {
     limpar_Matriz (&copiaPara_1e0s);
 }
 
+int verificar_Minusculas_Repetidas_com_Maiusculas (Matriz *a) {
+    int i, j;
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMaiuscula(a->matriz[i][j])) {
+                int i2, j2;
+                for (i2 = 0; i2 < a->linhas; i2++) {
+                    if (a->matriz[i2][j] == a->matriz [i][j] + 32) return 0;
+                }
+                for (j2 = 0; j2 < a->colunas; j2++) {
+                    if (a->matriz[i][j2] == a->matriz [i][j] + 32) return 0;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 void risca_Minusculas_Repetidas (Matriz *a) {
     int i, j;
     for (i = 0; i < a->linhas; i++) {
@@ -544,7 +562,7 @@ void coloca_Em_Maiuscula_Pela_Riscada (Matriz *a) {
     }
 }
 
-//para casa letra maiuscula, verifica se exatamente um vizinho ortogonal é minusculo e se isso for verdade, esse vizinho passa a maiusculo
+//para cada letra maiuscula, verifica se exatamente um vizinho ortogonal é minusculo e se isso for verdade, esse vizinho passa a maiusculo
 void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a) {
     int i, j;
 
@@ -555,10 +573,38 @@ void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a) {
                 int baixo    = (i < a->linhas - 1 && ehMinuscula(a->matriz[i + 1][j]));
                 int esquerda = (j > 0 && ehMinuscula(a->matriz[i][j - 1]));
                 int direita  = (j < a->colunas - 1 && ehMinuscula(a->matriz[i][j + 1]));
-                if (cima && !(baixo || esquerda || direita)) a->matriz[i-1][j] = a->matriz[i-1][j] - 32;
-                if (baixo && !(cima || esquerda || direita)) a->matriz[i+1][j] = a->matriz[i+1][j] - 32;
-                if (esquerda && !(cima || baixo || direita)) a->matriz[i][j-1] = a->matriz[i][j-1] - 32;
-                if (direita && !(cima || baixo || esquerda)) a->matriz[i][j+1] = a->matriz[i][j+1] - 32; 
+                
+                int Maiuscula = 
+                    (i > 0 && ehMaiuscula(a->matriz[i - 1][j])) ||
+                    (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j])) ||
+                    (j > 0 && ehMaiuscula(a->matriz[i][j - 1])) ||
+                    (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
+                    
+                if (cima && !(baixo || esquerda || direita) && !Maiuscula) a->matriz[i-1][j] = a->matriz[i-1][j] - 32;
+                if (baixo && !(cima || esquerda || direita) && !Maiuscula) a->matriz[i+1][j] = a->matriz[i+1][j] - 32;
+                if (esquerda && !(cima || baixo || direita) && !Maiuscula) a->matriz[i][j-1] = a->matriz[i][j-1] - 32;
+                if (direita && !(cima || baixo || esquerda) && !Maiuscula) a->matriz[i][j+1] = a->matriz[i][j+1] - 32; 
+            }
+        }
+    }
+}
+
+void risca_Rodeada_Maiusculas (Matriz *a) {
+    int i, j;
+
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            if (ehMinuscula (a->matriz[i][j])) {    
+                int Maiuscula = 
+                    (i > 0 && ehMaiuscula(a->matriz[i - 1][j])) &&
+                    (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j])) &&
+                    (j > 0 && ehMaiuscula(a->matriz[i][j - 1])) &&
+                    (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
+                    
+                if (Maiuscula) {
+                    if (verCaminhoMaiusculas (a)) a->matriz[i][j] = '#';
+                    else a->matriz[i][j] = a->matriz[i][j] - 32;
+                }
             }
         }
     }
@@ -573,6 +619,18 @@ int quant_Minusculas (Matriz *a) {
     }
     return cont;
 }
+
+Matriz cria_Matriz_igual (Matriz *a) {
+    int i, j;
+    Matriz copia = criar_Matriz(a->linhas, a->colunas);
+    for (i = 0; i < a->linhas; i++) {
+        for (j = 0; j < a->colunas; j++) {
+            copia.matriz[i][j] = a->matriz[i][j];
+        }
+    }
+    return copia;
+}
+
 
 #ifndef TESTING
 
@@ -669,19 +727,53 @@ while (1) {
         printf ("r x y → Riscar letra\n");
         printf ("d → Desfazer jogada\n");
         printf ("a → Atualizar matriz\n");
+        printf ("A → Atualizar matriz repetidamente\n");
         printf ("v → Verificar regras\n");
         printf ("s → Sair\n");
     }
     else if (c == 'a') {
         coloca_Em_Maiuscula_Pela_Riscada (&mapa);
         risca_Minusculas_Repetidas (&mapa);
+        coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
+        risca_Rodeada_Maiusculas (&mapa);
         colocarMatrizNaPilha (&jogadas, mapa);
         ultima_linha = -1; ultima_coluna = -1;
     }
+    else if (c == 'A') {
+        int matrizMudou = 1;
+            while (matrizMudou) {
+                matrizMudou = 0;
+
+                Matriz copia = cria_Matriz_igual (&mapa);
+
+                coloca_Em_Maiuscula_Pela_Riscada (&mapa);
+                risca_Minusculas_Repetidas (&mapa);
+                coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
+                risca_Rodeada_Maiusculas (&mapa);
+
+                // Compare a matriz atual com a cópia
+                for (int i = 0; i < mapa.linhas; i++) {
+                    for (int j = 0; j < mapa.colunas; j++) {
+                        if (copia.matriz[i][j] != mapa.matriz[i][j]) {
+                            matrizMudou = 1;
+                            break;
+                        }
+                    }
+                    if (matrizMudou) break;
+                }
+
+                limpar_Matriz(&copia);
+
+                colocarMatrizNaPilha (&jogadas, mapa);
+                ultima_linha = -1; ultima_coluna = -1;
+                imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna); 
+                printf ("\n");
+            }
+        }
     else printf ("Comando Inválido\n");
 
     // Imprimir com realce na última jogada
-    imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
+    if (c != 'A' && c != 'R') imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
 
     if (quant_Minusculas (&mapa) == 0) {
         if (verificarLetrasRiscadas (&mapa) &&
@@ -689,8 +781,8 @@ while (1) {
             verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
             verificarLetrasMaiusculasRepetidasColuna (&mapa) &&
             verCaminhoMaiusculas (&mapa)) {
-            printf ("Jogo Ganho!\n");
-            break;
+                printf ("Jogo Ganho!\n");
+                break;
         }
         else printf ("Algo não está certo!\n");
     }
