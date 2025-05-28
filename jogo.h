@@ -54,5 +54,8 @@ void coloca_Em_Maiuscula_Pela_Riscada (Matriz *a);
 int ehMinuscula (char a);
 void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a);
 int quant_Minusculas (Matriz *a);
+int verificar_Minusculas_Repetidas_com_Maiusculas (Matriz *a);
+void risca_Rodeada_Maiusculas (Matriz *a);
+Matriz cria_Matriz_igual (Matriz *a);
 
 #endif // JOGO_H

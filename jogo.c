@@ -504,6 +504,7 @@ void imprimirVerCaminhoMaiusculas(Matriz *a) {
     limpar_Matriz (&copiaPara_1e0s);
 }
 
+//percorre todas as celulas da matriz e sempre que encontra uma letra maiuscula vai procurar se existe essa letra minuscula na mesma linha/coluna
 int verificar_Minusculas_Repetidas_com_Maiusculas (Matriz *a) {
     int i, j;
     for (i = 0; i < a->linhas; i++) {
@@ -589,6 +590,9 @@ void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a) {
     }
 }
 
+//percorre a matriz e procura letras minusculas que estejam rodeadas ortogonalmente por letras maiusculas
+//se a letra for minuscula e os vizinhos forem todos maiusculos entao essa letra sera "avaliada":
+//se verCaminhoMaiuscula(letra) der verdadeiro, sera riscada, se nao vira maiuscula
 void risca_Rodeada_Maiusculas (Matriz *a) {
     int i, j;
 
@@ -620,6 +624,9 @@ int quant_Minusculas (Matriz *a) {
     return cont;
 }
 
+//é util para para se por exemplo :
+//Antes de o jogador fazer uma jogada, pode se criar uma copia da matriz atual.Se ele quiser desfazer a jogada, volta se a esssa copia
+//VER MELHOR
 Matriz cria_Matriz_igual (Matriz *a) {
     int i, j;
     Matriz copia = criar_Matriz(a->linhas, a->colunas);
