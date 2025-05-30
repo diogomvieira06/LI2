@@ -120,12 +120,12 @@ void test_ler_ficheiro(void) {
 void test_ler_ficheiro2(void) {
 
     Matriz m = ler_ficheiro("j1.txt");
-    CU_ASSERT(m.linhas == 5);
-    CU_ASSERT(m.colunas == 5);
-    CU_ASSERT(m.matriz[0][0] == 'e');
-    CU_ASSERT(m.matriz[0][3] == 'd');
-    CU_ASSERT(m.matriz[2][0] == 'b');
-    CU_ASSERT(m.matriz[4][4] == 'b');
+    CU_ASSERT(m.linhas == 9);
+    CU_ASSERT(m.colunas == 9);
+    CU_ASSERT(m.matriz[0][0] == 'i');
+    CU_ASSERT(m.matriz[0][3] == 'e');
+    CU_ASSERT(m.matriz[2][0] == 'g');
+    CU_ASSERT(m.matriz[4][4] == 'a');
 
     limpar_Matriz(&m);
 }
