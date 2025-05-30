@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "jogo.h"
 
 
@@ -413,42 +414,59 @@ Matriz cria_Matriz_copia (Matriz *a) {
 
 
 int verCaminho(Matriz *a, int linha1, int coluna1, int linha2, int coluna2) {
-    // Condição base: se chegamos ao destino
     if (linha1 == linha2 && coluna1 == coluna2) return 1;
 
-    // Marca a célula atual como visitada temporariamente
-    char original = a->matriz[linha1][coluna1];
-    a->matriz[linha1][coluna1] = '0';
-
-    // Verifica as direções (cima, baixo, esquerda, direita)
-    if (linha1 > 0 && a->matriz[linha1 - 1][coluna1] == '1' &&
-        verCaminho(a, linha1 - 1, coluna1, linha2, coluna2)) {
-        a->matriz[linha1][coluna1] = original; // Restaura o estado original
-        return 1;
+    // Cria uma matriz para marcar as células visitadas
+    int visitado[a->linhas][a->colunas];
+    for (int i = 0; i < a->linhas; i++) {
+        for (int j = 0; j < a->colunas; j++) {
+            visitado[i][j] = 0;
+        }
     }
 
-    if (linha1 < a->linhas - 1 && a->matriz[linha1 + 1][coluna1] == '1' &&
-        verCaminho(a, linha1 + 1, coluna1, linha2, coluna2)) {
-        a->matriz[linha1][coluna1] = original; // Restaura o estado original
-        return 1;
+    // Fila para BFS
+    Posicao fila[a->linhas * a->colunas];
+    int inicio = 0, fim = 0;
+
+    // Adiciona a posição inicial à fila
+    fila[fim++] = (Posicao){linha1, coluna1};
+    visitado[linha1][coluna1] = 1;
+
+    // Direções para cima, baixo, esquerda, direita
+    int direcoes[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    while (inicio < fim) {
+        Posicao atual = fila[inicio++];
+        int linha = atual.linha;
+        int coluna = atual.coluna;
+
+        // Verifica todas as direções
+        for (int d = 0; d < 4; d++) {
+            int novaLinha = linha + direcoes[d][0];
+            int novaColuna = coluna + direcoes[d][1];
+
+            // Verifica se a nova posição está dentro dos limites e não foi visitada
+            if (novaLinha >= 0 && novaLinha < a->linhas &&
+                novaColuna >= 0 && novaColuna < a->colunas &&
+                !visitado[novaLinha][novaColuna] &&
+                a->matriz[novaLinha][novaColuna] == '1') {
+
+                // Se chegamos ao destino, retorna 1
+                if (novaLinha == linha2 && novaColuna == coluna2) {
+                    return 1;
+                }
+
+                // Marca como visitado e adiciona à fila
+                visitado[novaLinha][novaColuna] = 1;
+                fila[fim++] = (Posicao){novaLinha, novaColuna};
+            }
+        }
     }
 
-    if (coluna1 > 0 && a->matriz[linha1][coluna1 - 1] == '1' &&
-        verCaminho(a, linha1, coluna1 - 1, linha2, coluna2)) {
-        a->matriz[linha1][coluna1] = original; // Restaura o estado original
-        return 1;
-    }
-
-    if (coluna1 < a->colunas - 1 && a->matriz[linha1][coluna1 + 1] == '1' &&
-        verCaminho(a, linha1, coluna1 + 1, linha2, coluna2)) {
-        a->matriz[linha1][coluna1] = original; // Restaura o estado original
-        return 1;
-    }
-
-    // Restaura o estado original antes de retornar
-    a->matriz[linha1][coluna1] = original;
+    // Se não encontrou o caminho, retorna 0
     return 0;
 }
+
 
 int verCaminhoMatriz (Matriz *a) {
     int i, j;
@@ -482,7 +500,7 @@ int verCaminhoMaiusculas (Matriz *a) {
 void imprimirVerCaminhoMaiusculas(Matriz *a) {
     printf ("Não existe caminho entre: ");
     Matriz copiaPara_1e0s = cria_Matriz_copia (a);
-    int i, j;
+    int i, j, r = 0;
     for (i = 0; i < copiaPara_1e0s.linhas; i++) {
         for (j = 0; j < copiaPara_1e0s.colunas; j++) {
             if (copiaPara_1e0s.matriz[i][j] == '1') {
@@ -492,6 +510,11 @@ void imprimirVerCaminhoMaiusculas(Matriz *a) {
                         if (copiaPara_1e0s.matriz[i2][j2] == '1') {
                             if (!verCaminho(&copiaPara_1e0s, i, j, i2, j2)) {
                                 printf ("(%c%d, %c%d) ", j+97, i+1, j2+97, i2+1);
+                                r++;
+                                if (r==6) {
+                                    printf("etc...\n");
+                                    return; // Se já encontrou um par, não precisa continuar
+                                }
                             }
                         }
                     }
@@ -504,7 +527,12 @@ void imprimirVerCaminhoMaiusculas(Matriz *a) {
     limpar_Matriz (&copiaPara_1e0s);
 }
 
+<<<<<<< HEAD
 //percorre todas as celulas da matriz e sempre que encontra uma letra maiuscula vai procurar se existe essa letra minuscula na mesma linha/coluna
+=======
+// percorre todas as celulas da matriz e sempre que encontra uma letra maiuscula vai procurar se existe essa 
+// letra minuscula na mesma linha/coluna
+>>>>>>> 4122d9b (Comando A feito e R inicializado2)
 int verificar_Minusculas_Repetidas_com_Maiusculas (Matriz *a) {
     int i, j;
     for (i = 0; i < a->linhas; i++) {
@@ -590,29 +618,40 @@ void coloca_Em_Maiuscula_Pelo_Caminho (Matriz *a) {
     }
 }
 
+<<<<<<< HEAD
 //percorre a matriz e procura letras minusculas que estejam rodeadas ortogonalmente por letras maiusculas
 //se a letra for minuscula e os vizinhos forem todos maiusculos entao essa letra sera "avaliada":
 //se verCaminhoMaiuscula(letra) der verdadeiro, sera riscada, se nao vira maiuscula
+=======
+
+// percorre a matriz e procura letras minusculas que estejam rodeadas ortogonalmente por letras maiusculas
+// se a letra for minuscula e os vizinhos forem todos maiusculos entao essa letra sera "avaliada":
+// se verCaminhoMaiuscula(letra) der verdadeiro, sera riscada, se nao vira maiuscula
+>>>>>>> 4122d9b (Comando A feito e R inicializado2)
 void risca_Rodeada_Maiusculas (Matriz *a) {
     int i, j;
 
     for (i = 0; i < a->linhas; i++) {
         for (j = 0; j < a->colunas; j++) {
             if (ehMinuscula (a->matriz[i][j])) {    
-                int Maiuscula = 
-                    (i > 0 && ehMaiuscula(a->matriz[i - 1][j])) &&
-                    (i < a->linhas - 1 && ehMaiuscula(a->matriz[i + 1][j])) &&
-                    (j > 0 && ehMaiuscula(a->matriz[i][j - 1])) &&
-                    (j < a->colunas - 1 && ehMaiuscula(a->matriz[i][j + 1]));
-                    
+                int Maiuscula = 1;
+
+                // Verifica os vizinhos
+                if (i > 0) Maiuscula &= ehMaiuscula(a->matriz[i - 1][j]); // Cima
+                if (i < a->linhas - 1) Maiuscula &= ehMaiuscula(a->matriz[i + 1][j]); // Baixo
+                if (j > 0) Maiuscula &= ehMaiuscula(a->matriz[i][j - 1]); // Esquerda
+                if (j < a->colunas - 1) Maiuscula &= ehMaiuscula(a->matriz[i][j + 1]); // Direita
+   
                 if (Maiuscula) {
                     if (verCaminhoMaiusculas (a)) a->matriz[i][j] = '#';
-                    else a->matriz[i][j] = a->matriz[i][j] - 32;
+                    else a->matriz[i][j] = a->matriz[i][j] - 32; // POSSIVELMENTE ERRADO
                 }
             }
         }
     }
 }
+
+
 
 int quant_Minusculas (Matriz *a) {
     int i, j, cont = 0;
@@ -624,9 +663,15 @@ int quant_Minusculas (Matriz *a) {
     return cont;
 }
 
+<<<<<<< HEAD
 //é util para para se por exemplo :
 //Antes de o jogador fazer uma jogada, pode se criar uma copia da matriz atual.Se ele quiser desfazer a jogada, volta se a esssa copia
 //VER MELHOR
+=======
+// é util para para se por exemplo :
+// Antes de o jogador fazer uma jogada, pode se criar uma copia da matriz atual.Se ele quiser desfazer a jogada, volta se a esssa copia
+// VER MELHOR
+>>>>>>> 4122d9b (Comando A feito e R inicializado2)
 Matriz cria_Matriz_igual (Matriz *a) {
     int i, j;
     Matriz copia = criar_Matriz(a->linhas, a->colunas);
@@ -739,15 +784,21 @@ while (1) {
         printf ("s → Sair\n");
     }
     else if (c == 'a') {
+        int quantidade_Elem_Matriz = mapa.linhas * mapa.colunas;
         coloca_Em_Maiuscula_Pela_Riscada (&mapa);
         risca_Minusculas_Repetidas (&mapa);
         coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
-        risca_Rodeada_Maiusculas (&mapa);
+        if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 5) {
+            risca_Rodeada_Maiusculas (&mapa);
+            }
         colocarMatrizNaPilha (&jogadas, mapa);
         ultima_linha = -1; ultima_coluna = -1;
+        printf ("Comando 'a' executado.\n");
+        printf("%d\n", quant_Minusculas (&mapa));
     }
     else if (c == 'A') {
         int matrizMudou = 1;
+        int quantidade_Elem_Matriz = mapa.linhas * mapa.colunas; 
             while (matrizMudou) {
                 matrizMudou = 0;
 
@@ -756,7 +807,9 @@ while (1) {
                 coloca_Em_Maiuscula_Pela_Riscada (&mapa);
                 risca_Minusculas_Repetidas (&mapa);
                 coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
-                risca_Rodeada_Maiusculas (&mapa);
+                if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 5) {
+                    risca_Rodeada_Maiusculas (&mapa);
+                    }
 
                 // Compare a matriz atual com a cópia
                 for (int i = 0; i < mapa.linhas; i++) {
@@ -771,12 +824,23 @@ while (1) {
 
                 limpar_Matriz(&copia);
 
-                colocarMatrizNaPilha (&jogadas, mapa);
-                ultima_linha = -1; ultima_coluna = -1;
-                imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna); 
-                printf ("\n");
+            }
+            colocarMatrizNaPilha (&jogadas, mapa);
+            ultima_linha = -1; ultima_coluna = -1;
+            imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna); 
+            printf ("\n");
+
+        }
+
+    else if (c == 'R') {
+    for (int i = 0; i < mapa.linhas; i++) {
+        for (int j = 0; j < mapa.colunas; j++) {
+            if (mapa.matriz[i][j] == mapa.matriz[i][j]) {
+                break;
             }
         }
+    }
+    }
     else printf ("Comando Inválido\n");
 
     // Imprimir com realce na última jogada

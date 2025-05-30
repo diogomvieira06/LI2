@@ -20,6 +20,10 @@ typedef struct {
     Node *topo;
 } Pilha;
 
+typedef struct {
+    int linha, coluna;
+} Posicao;
+
 
 // Funções principais
 Matriz criar_Matriz(int linhas, int colunas);
