@@ -489,6 +489,7 @@ int verCaminhoMatriz (Matriz *a) {
     return 1;
 }
 
+//faz uma copia da matriz e transforma as letras maiusculas em 1 e o resto em 0
 int verCaminhoMaiusculas (Matriz *a) {
     int r;
     Matriz copiaPara_1e0s = cria_Matriz_copia (a);
