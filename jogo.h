@@ -61,5 +61,6 @@ int quant_Minusculas (Matriz *a);
 int verificar_Minusculas_Repetidas_com_Maiusculas (Matriz *a);
 void risca_Rodeada_Maiusculas (Matriz *a);
 Matriz cria_Matriz_igual (Matriz *a);
+int existe_Igual_na_Linha_ou_Coluna (Matriz *a, char letra, int linha, int coluna);
 
 #endif // JOGO_H

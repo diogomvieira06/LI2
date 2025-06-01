@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include "jogo.h"
 
 
@@ -668,6 +667,18 @@ Matriz cria_Matriz_igual (Matriz *a) {
     return copia;
 }
 
+int existe_Igual_na_Linha_ou_Coluna (Matriz *a, char letra, int linha, int coluna) {
+    int i;
+    // Verifica na linha
+    for (i = 0; i < a->colunas; i++) {
+        if (i != coluna && a->matriz[linha][i] == letra) return 1;
+    }
+    // Verifica na coluna
+    for (i = 0; i < a->linhas; i++) {
+        if (i != linha && a->matriz[i][coluna] == letra) return 1;
+    }
+    return 0;
+}
 
 #ifndef TESTING
 
@@ -694,6 +705,7 @@ while (1) {
         mapa = ler_ficheiro (nome_Ficheiro);
         colocarMatrizNaPilha (&jogadas, mapa);
         ultima_linha = -1; ultima_coluna = -1;  // reset
+        printf ("Podes sempre utilizar o comando 'D' para obter dicas!\n");
     }
     else if (c == 'b') {
         if (scanf (" %c %d", &x, &y) != 2) printf ("Erro3");
@@ -763,9 +775,11 @@ while (1) {
         printf ("b x y → Colocar em Maiúscula\n");
         printf ("r x y → Riscar letra\n");
         printf ("d → Desfazer jogada\n");
+        printf ("D → Receber uma dica\n");
         printf ("a → Atualizar matriz\n");
         printf ("A → Atualizar matriz repetidamente\n");
         printf ("v → Verificar regras\n");
+        printf ("R → Resolver a matriz\n");
         printf ("s → Sair\n");
     }
     else if (c == 'a') {
@@ -773,12 +787,11 @@ while (1) {
         coloca_Em_Maiuscula_Pela_Riscada (&mapa);
         risca_Minusculas_Repetidas (&mapa);
         coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
-        if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 5) {
+        if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 10) {
             risca_Rodeada_Maiusculas (&mapa);
             }
         colocarMatrizNaPilha (&jogadas, mapa);
         ultima_linha = -1; ultima_coluna = -1;
-        printf ("Comando 'a' executado.\n");
         printf("%d\n", quant_Minusculas (&mapa));
     }
     else if (c == 'A') {
@@ -792,7 +805,7 @@ while (1) {
                 coloca_Em_Maiuscula_Pela_Riscada (&mapa);
                 risca_Minusculas_Repetidas (&mapa);
                 coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
-                if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 5) {
+                if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 10) {
                     risca_Rodeada_Maiusculas (&mapa);
                     }
 
@@ -807,143 +820,146 @@ while (1) {
                     if (matrizMudou) break;
                 }
 
+                if (matrizMudou) {
+                    imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
+                    printf ("\n");
+                }
+                
+
                 limpar_Matriz(&copia);
 
             }
             colocarMatrizNaPilha (&jogadas, mapa);
-            ultima_linha = -1; ultima_coluna = -1;
-            imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna); 
             printf ("\n");
 
         }
 
     else if (c == 'R') {
-        int comecaCiclo = 1;
-        while ((!(verificarLetrasRiscadas (&mapa) &&
+        int comecaCiclo = 1, i = 0, j = 0;
+        while (((!(verificarLetrasRiscadas (&mapa) &&
                  verificarLetrasRiscadasComMaiusculas (&mapa) &&
                  verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
                  verificarLetrasMaiusculasRepetidasColuna (&mapa) &&
-                 verCaminhoMaiusculas (&mapa)) || comecaCiclo) && quant_Minusculas (&mapa) > 0) {
+                 verCaminhoMaiusculas (&mapa)) || comecaCiclo) || quant_Minusculas (&mapa) > 0) && 
+                 i < mapa.linhas && j < mapa.colunas) {
             comecaCiclo = 0;
-            for (int i = 0; i < mapa.linhas; i++) {
-                for (int j = 0; j < mapa.colunas; j++) {
-                    if (ehMinuscula (mapa.matriz[i][j])) {
-                        int j2, i2;
-                        for (j2 = j + 1; j2 < mapa.colunas;j2++) {
-                            if (mapa.matriz[i][j] == mapa.matriz[i][j2]) {
-                                riscar_Elem (mapa, j + 'a', i + 1);
-                                // Inicia o comando A
-                                int matrizMudou = 1;
-                                int quantidade_Elem_Matriz = mapa.linhas * mapa.colunas; 
-                                    while (matrizMudou) {
-                                        matrizMudou = 0;
-                        
-                                        Matriz copia = cria_Matriz_igual (&mapa);
-                        
-                                        coloca_Em_Maiuscula_Pela_Riscada (&mapa);
-                                        risca_Minusculas_Repetidas (&mapa);
-                                        coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
-                                        if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 5) {
-                                            risca_Rodeada_Maiusculas (&mapa);
-                                            }
-                        
-                                        // Compare a matriz atual com a cópia
-                                        for (int i = 0; i < mapa.linhas; i++) {
-                                            for (int j = 0; j < mapa.colunas; j++) {
-                                                if (copia.matriz[i][j] != mapa.matriz[i][j]) {
-                                                    matrizMudou = 1;
-                                                    break;
-                                                }
-                                            }
-                                            if (matrizMudou) break;
+            for (i = 0; i < mapa.linhas; i++) {
+                for (j = 0; j < mapa.colunas; j++) {
+                    if (ehMinuscula (mapa.matriz[i][j]) &&  existe_Igual_na_Linha_ou_Coluna (&mapa, mapa.matriz[i][j], i, j)) {
+                        maiuscula_Elem (mapa, j + 'a', i + 1);
+                        // Inicia o comando A
+                        int matrizMudou = 1;
+                        int quantidade_Elem_Matriz = mapa.linhas * mapa.colunas; 
+                            while (matrizMudou) {
+                                matrizMudou = 0;
+                
+                                Matriz copia = cria_Matriz_igual (&mapa);
+                
+                                coloca_Em_Maiuscula_Pela_Riscada (&mapa);
+                                risca_Minusculas_Repetidas (&mapa);
+                                coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
+                                if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 10) {
+                                    risca_Rodeada_Maiusculas (&mapa);
+                                    }
+                
+                                // Compare a matriz atual com a cópia
+                                for (int i = 0; i < mapa.linhas; i++) {
+                                    for (int j = 0; j < mapa.colunas; j++) {
+                                        if (copia.matriz[i][j] != mapa.matriz[i][j]) {
+                                            matrizMudou = 1;
+                                            break;
                                         }
-                        
-                                        limpar_Matriz(&copia);
-                        
                                     }
-                                    // Fim do comando A sem colocar a Matriz na pilha.
+                                    if (matrizMudou) break;
+                                }
 
-                                    if (verificarLetrasRiscadas (&mapa) &&
-                                    verificarLetrasRiscadasComMaiusculas (&mapa) &&
-                                    verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
-                                    verificarLetrasMaiusculasRepetidasColuna (&mapa)) { // Se fizessemos v e não desse erro (ignorando o caminho) colocamos a matriz na pila e avançamos para a proxima letra
-                                        colocarMatrizNaPilha (&jogadas, mapa);
-                                        ultima_linha = -1; ultima_coluna = -1;
-                                        imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
-                                        break;
-                                    } else {
-                                        restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
-                                    }
+                                // Se a matriz mudou, imprime a matriz atualizada
+                                if (matrizMudou) {
+                                    imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
+                                    printf ("\n");
+                                }
+                
+                                limpar_Matriz(&copia);
+                
                             }
-                        }
-                        for (i2 = i + 1; i2 < mapa.linhas;i2++) {
-                            if (mapa.matriz[i][j] == mapa.matriz[i2][j]) {
-                                riscar_Elem (mapa, j + 'a', i + 1);
-                                // Inicia o comando A
-                                int matrizMudou = 1;
-                                int quantidade_Elem_Matriz = mapa.linhas * mapa.colunas; 
-                                    while (matrizMudou) {
-                                        matrizMudou = 0;
-                        
-                                        Matriz copia = cria_Matriz_igual (&mapa);
-                        
-                                        coloca_Em_Maiuscula_Pela_Riscada (&mapa);
-                                        risca_Minusculas_Repetidas (&mapa);
-                                        coloca_Em_Maiuscula_Pelo_Caminho (&mapa);
-                                        if (quant_Minusculas (&mapa) * 100 / quantidade_Elem_Matriz < 5) {
-                                            risca_Rodeada_Maiusculas (&mapa);
-                                            }
-                        
-                                        // Compare a matriz atual com a cópia
-                                        for (int i = 0; i < mapa.linhas; i++) {
-                                            for (int j = 0; j < mapa.colunas; j++) {
-                                                if (copia.matriz[i][j] != mapa.matriz[i][j]) {
-                                                    matrizMudou = 1;
-                                                    break;
-                                                }
-                                            }
-                                            if (matrizMudou) break;
-                                        }
-                        
-                                        limpar_Matriz(&copia);
-                        
-                                    }
-                                    // Fim do comando A sem colocar a Matriz na pilha.
+                            // Fim do comando A sem colocar a Matriz na pilha.
 
-                                    if (verificarLetrasRiscadas (&mapa) &&
-                                    verificarLetrasRiscadasComMaiusculas (&mapa) &&
-                                    verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
-                                    verificarLetrasMaiusculasRepetidasColuna (&mapa)) { // Se fizessemos v e não desse erro (ignorando o caminho) colocamos a matriz na pila e avançamos para a proxima letra
-                                        colocarMatrizNaPilha (&jogadas, mapa);
-                                        ultima_linha = -1; ultima_coluna = -1;
-                                        imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
-                                        break;
-                                    } else {
-                                        restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
-                                    }
+                            if (verificarLetrasRiscadas (&mapa) &&
+                            verificarLetrasRiscadasComMaiusculas (&mapa) &&
+                            verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
+                            verificarLetrasMaiusculasRepetidasColuna (&mapa)) { // Se fizessemos v e não der erro (ignorando o caminho) colocamos a matriz na pila e avançamos para a proxima letra
+                                colocarMatrizNaPilha (&jogadas, mapa);
+                                ultima_linha = -1; ultima_coluna = -1;
+                                imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
+                                printf ("\n");
+                                if (quant_Minusculas (&mapa) > 0) printf ("Não houve erro na verificação por isso avança por esta jogada. \n\n");
+                            } else {
+                                restoraMatrizParaAUltimaJogada (&jogadas, &mapa);
+                                printf ("Houve um erro por isso regressou nas jogadas.\n\n");
                             }
-                        }
                     }
                 }
             }
         }
     }
+    else if (c == 'D') {
+        // Dicas
+        if (mapa.matriz == NULL) {
+            printf ("Jogo não iniciado!\nCarregue em 'c' e dê ENTER para ver os comandos\n");
+        }
+        else if (((verificarLetrasRiscadas (&mapa) == 0) + 
+                 (verificarLetrasMaiusculasRepetidasLinha (&mapa) == 0) +
+                 (verificarLetrasMaiusculasRepetidasColuna (&mapa) == 0)) > 1) {
+                printf ("Parece que tens várias regras violadas.\n");
+                printf ("Podes sempre usar o comando 'd' para voltar atrás.\n");
+        }
+        else if (verificarLetrasRiscadas (&mapa) == 0) {
+            printf ("Talvez seja melhor conferires se não há duas riscadas juntas.\n");
+            printf ("Podes sempre usar o comando 'd' para voltar atrás.\n");
+        }
+        else if (verificarLetrasMaiusculasRepetidasLinha (&mapa) == 0) {
+            printf ("Talvez seja melhor conferires se não há letras maiúsculas repetidas na linha.\n");
+            printf ("Podes sempre usar o comando 'd' para voltar atrás.\n");
+        }
+        else if (verificarLetrasMaiusculasRepetidasColuna (&mapa) == 0) {
+            printf ("Talvez seja melhor conferires se não há letras maiúsculas repetidas na coluna.\n");
+            printf ("Podes sempre usar o comando 'd' para voltar atrás.\n");
+        }
+        else if (verificarLetrasRiscadasComMaiusculas (&mapa) == 0) {
+            printf ("Talvez seja uma boa altura para usares os comandos 'a' ou 'A'.\n");
+        }
+        else if (quant_Minusculas (&mapa) == 0 && verCaminhoMaiusculas (&mapa) == 0) {
+            printf ("Parece que não existe caminho entre as letras maiúsculas.\n");
+            printf ("Talvez tenhas que usar o comando 'd' para voltar atrás várias vezes.\n");
+        }
+        else if (verCaminhoMaiusculas (&mapa) == 0) {
+            printf ("Parece que não existe caminho entre as letras maiúsculas.\n");
+            imprimirVerCaminhoMaiusculas(&mapa);
+        }
+        else printf ("Parece estar tudo bem, continua. Mas lembra-te que as letras maiúsculas têm que ter um caminho entre si!\n");
+    }
+
     else printf ("Comando Inválido\n");
 
     // Imprimir com realce na última jogada
     if (c != 'A' && c != 'R') imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
-
+    
+    if (mapa.matriz != NULL) printf ("Minusculas: %d\n", quant_Minusculas (&mapa));
+    
     if (quant_Minusculas (&mapa) == 0) {
         if (verificarLetrasRiscadas (&mapa) &&
             verificarLetrasRiscadasComMaiusculas (&mapa) &&
             verificarLetrasMaiusculasRepetidasLinha (&mapa) &&
             verificarLetrasMaiusculasRepetidasColuna (&mapa) &&
-            verCaminhoMaiusculas (&mapa)) {
+            verCaminhoMaiusculas (&mapa) && mapa.matriz != NULL) {
                 printf ("Jogo Ganho!\n");
                 break;
         }
-        else printf ("Algo não está certo!\n");
+        else if (mapa.matriz == NULL && c != 'D') printf ("Jogo não iniciado!\nCarregue em 'c' e dê ENTER para ver os comandos\n");
+        else if (c != 'D')printf ("Algo não está certo!\n");
     }
+
+    
 }
 
 limpar_Pilha (&jogadas);
