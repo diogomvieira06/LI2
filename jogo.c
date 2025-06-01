@@ -690,6 +690,7 @@ int main (){
     iniciarPilha (&jogadas);
     int ultima_linha = -1, ultima_coluna = -1;
     printf ("Carregue em c e dê ENTER para ver os comandos.\n");
+    int contaD = 0; // contador para o comando 'd' (dicas)
 
 //  Simula o comando "l j1.txt" para poupar tempo durante o desenvolvimento
 //    mapa = ler_ficheiro("Teste de Maiusculas.txt");
@@ -932,9 +933,12 @@ while (1) {
             printf ("Parece que não existe caminho entre as letras maiúsculas.\n");
             printf ("Talvez tenhas que usar o comando 'd' para voltar atrás várias vezes.\n");
         }
-        else if (verCaminhoMaiusculas (&mapa) == 0) {
-            printf ("Parece que não existe caminho entre as letras maiúsculas.\n");
-            imprimirVerCaminhoMaiusculas(&mapa);
+        else if (contaD < 4) {
+            if (contaD == 0)printf ("Lembra-te que se duas ou mais letras minusculas iguais estiverem na mesma linha ou coluna, pelo menos uma delas tem que ser riscada.\n");
+            else if (contaD == 1)printf ("Lembra-te que se uma letra maiúscula estiver na mesma linha ou coluna de uma letra minúscula igual, essa letra minúscula tem que ser riscada.\n");
+            else if (contaD == 2)printf ("Procura letras minusculas iguais na mesma linha ou coluna, provavelmente vais ter que colocar alguma em Maiuscula. \n");
+            else if (contaD == 3)printf ("Lembra-te de usares sempre os comandos disponiveis, caso não te lembres podes sempre usar o 'c' para veres uma lista.\n");
+            contaD++;
         }
         else printf ("Parece estar tudo bem, continua. Mas lembra-te que as letras maiúsculas têm que ter um caminho entre si!\n");
     }
@@ -942,7 +946,10 @@ while (1) {
     else printf ("Comando Inválido\n");
 
     // Imprimir com realce na última jogada
-    if (c != 'A' && c != 'R') imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
+    if (c == 'b' || c == 'r')
+    imprimir_Matriz_Ponteiro (&mapa, ultima_linha, ultima_coluna);
+    else
+    imprimir_Matriz_Ponteiro (&mapa, -1, -1); // não realça nada
     
     if (mapa.matriz != NULL) printf ("Minusculas: %d\n", quant_Minusculas (&mapa));
     

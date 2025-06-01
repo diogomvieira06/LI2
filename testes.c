@@ -901,6 +901,26 @@ void test_cria_Matriz_igual(void) {
 }
 
 
+void test_existe_Igual_na_Linha_ou_Coluna() {
+    Matriz m = criar_Matriz(2, 2);
+
+    m.matriz[0][0] = 'A';
+    m.matriz[0][1] = 'B';
+    m.matriz[1][0] = 'C';
+    m.matriz[1][1] = 'A'; 
+
+    
+    CU_ASSERT_EQUAL(existe_Igual_na_Linha_ou_Coluna(&m, 'A', 1, 1), 0);
+
+    m.matriz[1][0] = 'A';
+    CU_ASSERT_EQUAL(existe_Igual_na_Linha_ou_Coluna(&m, 'A', 1, 0), 1); 
+
+    CU_ASSERT_EQUAL(existe_Igual_na_Linha_ou_Coluna(&m, 'B', 0, 1), 0); 
+
+    limpar_Matriz(&m);
+}
+
+
 int main() {
     CU_initialize_registry();
 
@@ -971,6 +991,7 @@ int main() {
     CU_add_test(Tarefa3, "testar a funçao verificar_Minusculas_Repetidas_com_Maiusculas", test_verificar_Minusculas_Repetidas_com_Maiusculas);
     CU_add_test(Tarefa3, "teste para a funçao risca_Rodeada_Maiusculas", test_risca_Rodeada_Maiusculas_letras_diferentes);
     CU_add_test(Tarefa3, "teste para a funçao cria_Matriz_igual", test_cria_Matriz_igual);
+    CU_add_test(Tarefa3, "teste para a funçao existe_Igual_na_Linha_ou_Coluna", test_existe_Igual_na_Linha_ou_Coluna);
 
 
 
